@@ -6,6 +6,21 @@ way to find the answer on a real device with real (the spiker's own) credentials
 **Do not guess at the answer and write it into product code** — land the spike's
 findings here first, then implement.
 
+## Run these in order
+
+1. **Spike 1 — Portal authentication**, on a real phone, with your own GUC
+   credentials. Nothing else below can start until this resolves.
+2. **Spike 3 — Cookie/session handling**, right after Spike 1, on the same
+   device/login.
+3. **Spike 2 — Mail protocol**, in parallel with 1/3 if a second person is
+   available (it doesn't depend on the portal auth answer, only on the mail
+   login, which may or may not be the same system — see below).
+4. **Spike 6 — Transcript-locked detection**, once Spike 1 unblocks any real
+   fetch and before `transcript` is implemented.
+5. **Spike 5 — Background refresh limits**, low priority, can run any time
+   there's a build on a real device left running for a few days.
+6. **Spike 4 — HTML parser in Hermes**: already resolved, kept for the record.
+
 ## Spike 1 — Portal authentication (blocks: everything that logs in)
 
 **Question:** Does the GUC student portal use NTLM (Windows Integrated Auth), a

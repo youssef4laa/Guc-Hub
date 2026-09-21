@@ -9,6 +9,15 @@
       "distribution": "internal",
       "env": {
         "EXPO_PUBLIC_MODE": "mock"
+      },
+      "android": {
+        "buildType": "apk"
+      }
+    },
+    "development-simulator": {
+      "extends": "development",
+      "ios": {
+        "simulator": true
       }
     },
     "preview": {
