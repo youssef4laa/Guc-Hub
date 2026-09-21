@@ -1,0 +1,8 @@
+node_modules
+dist
+.expo
+ios
+android
+src/core/registry/registry.generated.ts
+fixtures/**/raw.local
+pnpm-lock.yaml
