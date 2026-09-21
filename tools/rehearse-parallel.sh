@@ -81,7 +81,9 @@ EOF
   '
 
   echo "--- [A] variable in its own .env.example block ---"
-  printf '\nEXPO_PUBLIC_REHEARSAL_A=true\n' >> .env.example
+  sed -i.bak '/^EXPO_PUBLIC_PORTAL_AUTH_STRATEGY=mock$/a\
+EXPO_PUBLIC_REHEARSAL_A=true
+' .env.example && rm .env.example.bak
 
   echo "--- [A] its own spike doc ---"
   cat > docs/discovery/spike-rehearsal-a.md <<'EOF'
@@ -100,7 +102,7 @@ own ADR without colliding with Track B's numbering.
 EOF
 
   echo "--- [A] one new dependency ---"
-  pnpm add ms --ignore-scripts >/dev/null
+  pnpm add clsx --ignore-scripts >/dev/null
 
   git add -A
   git commit -q -m "rehearsal: Track A parallel-work simulation"
@@ -136,7 +138,9 @@ EOF
   '
 
   echo "--- [B] variable in its own .env.example block ---"
-  printf '\nEXPO_PUBLIC_REHEARSAL_B=true\n' >> .env.example
+  sed -i.bak '/^EXPO_PUBLIC_GUC_MAIL_HOST=mail.example-guc.invalid$/a\
+EXPO_PUBLIC_REHEARSAL_B=true
+' .env.example && rm .env.example.bak
 
   echo "--- [B] its own spike doc ---"
   cat > docs/discovery/spike-rehearsal-b.md <<'EOF'
@@ -155,7 +159,7 @@ own ADR without colliding with Track A's numbering.
 EOF
 
   echo "--- [B] one new dependency ---"
-  pnpm add nanoid --ignore-scripts >/dev/null
+  pnpm add zustand --ignore-scripts >/dev/null
 
   git add -A
   git commit -q -m "rehearsal: Track B parallel-work simulation"
