@@ -1,6 +1,6 @@
 # See docs/PARALLEL_WORK.md for the full ownership rationale, and
 # .github/scope.json for the machine-readable version the CI scope guard reads.
-# Replace @FRIEND_HANDLE with the real GitHub handle before the first real PR.
+# Replace @mokhalifa9 with the real GitHub handle before the first real PR.
 
 # Track A: Portal
 /src/features/schedule/       @youssef4laa
@@ -17,33 +17,33 @@
 /docs/adr/A-*                 @youssef4laa
 
 # Track B: Mail & Experience
-/src/features/mail/           @FRIEND_HANDLE
-/src/features/flappy/         @FRIEND_HANDLE
-/src/features/settings/       @FRIEND_HANDLE
-/src/core/ui/                 @FRIEND_HANDLE
-/src/core/theme/              @FRIEND_HANDLE
-/src/core/notifications/      @FRIEND_HANDLE
-/native/widgets/              @FRIEND_HANDLE
-/config/plugins.mail.js       @FRIEND_HANDLE
-/docs/roadmap/track-b.md      @FRIEND_HANDLE
-/docs/adr/B-*                 @FRIEND_HANDLE
+/src/features/mail/           @mokhalifa9
+/src/features/flappy/         @mokhalifa9
+/src/features/settings/       @mokhalifa9
+/src/core/ui/                 @mokhalifa9
+/src/core/theme/              @mokhalifa9
+/src/core/notifications/      @mokhalifa9
+/native/widgets/              @mokhalifa9
+/config/plugins.mail.js       @mokhalifa9
+/docs/roadmap/track-b.md      @mokhalifa9
+/docs/adr/B-*                 @mokhalifa9
 
 # Shared — needs review from both
-/src/core/http/               @youssef4laa @FRIEND_HANDLE
-/src/core/storage/            @youssef4laa @FRIEND_HANDLE
-/src/core/query/               @youssef4laa @FRIEND_HANDLE
-/src/core/i18n/                @youssef4laa @FRIEND_HANDLE
-/src/features/auth/            @youssef4laa @FRIEND_HANDLE
-/app/                          @youssef4laa @FRIEND_HANDLE
-/config/plugins.shared.js      @youssef4laa @FRIEND_HANDLE
-/app.config.ts                 @youssef4laa @FRIEND_HANDLE
-/package.json                  @youssef4laa @FRIEND_HANDLE
-/pnpm-lock.yaml                @youssef4laa @FRIEND_HANDLE
-/tsconfig.json                 @youssef4laa @FRIEND_HANDLE
-/eslint.config.js              @youssef4laa @FRIEND_HANDLE
-/eas.json                      @youssef4laa @FRIEND_HANDLE
-/.env.example                  @youssef4laa @FRIEND_HANDLE
-/tools/                        @youssef4laa @FRIEND_HANDLE
-/.github/                      @youssef4laa @FRIEND_HANDLE
-/docs/PARALLEL_WORK.md         @youssef4laa @FRIEND_HANDLE
-/docs/adr/S-*                  @youssef4laa @FRIEND_HANDLE
+/src/core/http/               @youssef4laa @mokhalifa9
+/src/core/storage/            @youssef4laa @mokhalifa9
+/src/core/query/               @youssef4laa @mokhalifa9
+/src/core/i18n/                @youssef4laa @mokhalifa9
+/src/features/auth/            @youssef4laa @mokhalifa9
+/app/                          @youssef4laa @mokhalifa9
+/config/plugins.shared.js      @youssef4laa @mokhalifa9
+/app.config.ts                 @youssef4laa @mokhalifa9
+/package.json                  @youssef4laa @mokhalifa9
+/pnpm-lock.yaml                @youssef4laa @mokhalifa9
+/tsconfig.json                 @youssef4laa @mokhalifa9
+/eslint.config.js              @youssef4laa @mokhalifa9
+/eas.json                      @youssef4laa @mokhalifa9
+/.env.example                  @youssef4laa @mokhalifa9
+/tools/                        @youssef4laa @mokhalifa9
+/.github/                      @youssef4laa @mokhalifa9
+/docs/PARALLEL_WORK.md         @youssef4laa @mokhalifa9
+/docs/adr/S-*                  @youssef4laa @mokhalifa9
