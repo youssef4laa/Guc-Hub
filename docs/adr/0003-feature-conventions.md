@@ -26,7 +26,7 @@ taking down another's screen.
   adds general `require.context` support, this could be revisited, but the codegen
   script has the advantage of working today and being trivially testable in
   isolation (`tools/gen-registry.js` has no RN/Metro dependency at all).
-- **Cross-feature imports are forbidden**, enforced by the `boundaries/element-types`
+- **Cross-feature imports are forbidden**, enforced by the `boundaries/dependencies`
   ESLint rule: a feature may import `core/` and its own subtree, never another
   feature's files. If two features need the same thing, that thing belongs in
   `core/`.

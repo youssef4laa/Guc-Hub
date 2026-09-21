@@ -71,7 +71,7 @@ the student from their data.
   session/login machinery, storage, the design system, theming, i18n, notifications.
   It never imports from `src/features/*`.
 - **`features/*`** are content. They may import `core/`, never each other (enforced
-  by the `boundaries/element-types` ESLint rule). If two features seem to need the
+  by the `boundaries/dependencies` ESLint rule). If two features seem to need the
   same thing, that thing belongs in `core/`, not in one feature imported by another.
 
 ## Not in this foundation
