@@ -1,0 +1,25 @@
+{
+  "common": {
+    "retry": "Retry",
+    "loading": "Loading…",
+    "offline": "You're offline. Showing cached data.",
+    "openOriginal": "Open original page",
+    "parseFailed": "GUC's page layout changed. We can't read it yet.",
+    "notImplemented": "This feature isn't wired up to the real portal yet.",
+    "unofficialNotice": "Unofficial app — always verify important things on the official GUC portal."
+  },
+  "auth": {
+    "title": "Sign in to GUC Hub",
+    "usernameLabel": "GUC ID or email",
+    "passwordLabel": "Password",
+    "signIn": "Sign in",
+    "tryDemo": "Try demo",
+    "biometricUnlock": "Unlock with Face ID / Touch ID",
+    "invalidCredentials": "Incorrect username or password."
+  },
+  "schedule": {
+    "title": "Schedule",
+    "nextClass": "Next class",
+    "noClassesToday": "No classes today"
+  }
+}
