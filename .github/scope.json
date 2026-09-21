@@ -1,0 +1,69 @@
+{
+  "$comment": "Read by tools/check-scope.mjs. Track derived from the PR head branch prefix. 'shared/' branches are exempt (see docs/PARALLEL_WORK.md) since shared-infra PRs legitimately touch many paths; they're kept safe by review + size limits, not by this glob check.",
+  "tracks": {
+    "portal": {
+      "branchPrefixes": ["portal/"],
+      "owner": "@youssef4laa",
+      "allow": [
+        "src/features/schedule/**",
+        "src/features/grades/**",
+        "src/features/transcript/**",
+        "src/features/cms/**",
+        "src/features/exams/**",
+        "src/features/attendance/**",
+        "src/features/staff/**",
+        "src/features/evaluations/**",
+        "app/(tabs)/schedule.tsx",
+        "app/(tabs)/grades.tsx",
+        "app/(tabs)/transcript.tsx",
+        "app/(tabs)/cms.tsx",
+        "app/(tabs)/exams.tsx",
+        "app/(tabs)/attendance.tsx",
+        "app/(tabs)/staff.tsx",
+        "app/(tabs)/evaluations.tsx",
+        "fixtures/schedule/**",
+        "fixtures/grades/**",
+        "fixtures/transcript/**",
+        "fixtures/cms/**",
+        "fixtures/exams/**",
+        "fixtures/attendance/**",
+        "fixtures/staff/**",
+        "fixtures/evaluations/**",
+        "src/core/portal/**",
+        "src/core/http/**",
+        "config/plugins.portal.js",
+        "docs/discovery/spike-1*.md",
+        "docs/discovery/spike-3*.md",
+        "docs/discovery/spike-4*.md",
+        "docs/discovery/spike-6*.md",
+        "docs/roadmap/track-a.md",
+        "docs/adr/A-*"
+      ]
+    },
+    "mail": {
+      "branchPrefixes": ["mail/", "exp/"],
+      "owner": "@FRIEND_HANDLE",
+      "allow": [
+        "src/features/mail/**",
+        "src/features/flappy/**",
+        "src/features/settings/**",
+        "app/(tabs)/mail.tsx",
+        "app/(tabs)/flappy.tsx",
+        "app/(tabs)/settings.tsx",
+        "app/(tabs)/more.tsx",
+        "fixtures/mail/**",
+        "fixtures/flappy/**",
+        "src/core/ui/**",
+        "src/core/theme/**",
+        "src/core/notifications/**",
+        "native/widgets/**",
+        "config/plugins.mail.js",
+        "docs/discovery/spike-2*.md",
+        "docs/discovery/spike-5*.md",
+        "docs/discovery/spike-widgets*.md",
+        "docs/roadmap/track-b.md",
+        "docs/adr/B-*"
+      ]
+    }
+  }
+}
