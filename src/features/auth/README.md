@@ -3,7 +3,7 @@
 Owner: shared (both tracks review changes here). Source: both Unimail and GUCentral
 require the same GUC sign-in.
 
-Deviates from the standard feature triad (see ADR-003) in two ways:
+Deviates from the standard feature triad (see ADR S-003) in two ways:
 
 1. There's no page to parse, so there's no `source.ts` / `live.ts` / `mock.ts` /
    `parser.ts` — just a login form.

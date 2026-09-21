@@ -2,7 +2,7 @@
 
 Owner: Track B (mail & experience).
 
-Deliberately real, not stubbed (see ADR-003) — sign-out and the theme toggle are
+Deliberately real, not stubbed (see ADR S-003) — sign-out and the theme toggle are
 load-bearing for demo mode to be usable at all, so building this alongside
 `auth`/`schedule` in the foundation was cheaper than stubbing it and immediately
 un-stubbing it in phase 1.

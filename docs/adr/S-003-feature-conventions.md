@@ -1,4 +1,4 @@
-# ADR-003: Feature conventions
+# ADR S-003: Feature conventions
 
 ## Status
 

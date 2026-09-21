@@ -44,7 +44,7 @@ src/features/<name>/
 ```
 
 `auth` and `settings` deviate slightly from this shape — see their READMEs and
-ADR-003.
+ADR S-003.
 
 ## Why a registry instead of a shared route table
 
@@ -52,7 +52,7 @@ Section "adding a feature" of docs/CONTRIBUTING.md: a new feature never means
 editing a file another feature also edits. `tools/gen-registry.js` transpiles every
 `manifest.ts` and writes the gitignored `src/core/registry/registry.generated.ts`;
 the tab bar, the "More" menu, and the settings list are all _generated from that
-data_, not hand-maintained lists. See ADR-003 for why this is a codegen script and
+data_, not hand-maintained lists. See ADR S-003 for why this is a codegen script and
 not `require.context` (Metro doesn't support it outside Expo Router's own internal
 use).
 

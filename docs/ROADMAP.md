@@ -1,23 +1,16 @@
 # Roadmap
 
-## Phases
+Per-track detail lives in its own file so both tracks can edit their own roadmap
+without touching a shared one: [roadmap/track-a.md](roadmap/track-a.md) (Portal),
+[roadmap/track-b.md](roadmap/track-b.md) (Mail & Experience). This file holds
+only what's genuinely shared: phase 0, and what's permanently out of scope.
 
-| Feature                                                                          | Source                    | Track  | Phase                        | Status                                                        |
-| -------------------------------------------------------------------------------- | ------------------------- | ------ | ---------------------------- | ------------------------------------------------------------- |
-| auth: login, stored credentials, silent re-login, biometric unlock, demo mode    | both                      | shared | 0                            | **Built** (mock strategy only — see DISCOVERY Spike 1)        |
-| schedule (week/day view, "next class", local reminders)                          | GUCentral                 | A      | 0 (reference slice), then 1  | **Built in mock mode**; live is a stub                        |
-| settings (theme, sign out, unofficial notice)                                    | —                         | B      | 0 (built early, see ADR-003) | **Built**                                                     |
-| grades (colour-coded, custom names, weights)                                     | GUCentral                 | A      | 1                            | Stub                                                          |
-| mail: list, read, search, sort, safe HTML rendering                              | Unimail                   | B      | 1                            | Stub                                                          |
-| transcript (filter by year, locked detection)                                    | GUCentral                 | A      | 2                            | Stub                                                          |
-| cms (filter by type, unseen count, in-app open)                                  | GUCentral                 | A      | 2                            | Stub                                                          |
-| exams, attendance, staff contacts                                                | GUCentral                 | A      | 2                            | Stub                                                          |
-| mail: compose, attachments, swipe-delete with undo, share, multi-select          | Unimail                   | B      | 2                            | Stub                                                          |
-| evaluations (fast submit)                                                        | GUCentral                 | A      | 2                            | Stub                                                          |
-| local reminders (classes, exams, custom events) + best-effort background refresh | both                      | B      | 2                            | Class reminders built (schedule); exams/custom events not yet |
-| home-screen widgets (WidgetKit / Glance)                                         | GUCentral                 | B      | 3                            | Not started                                                   |
-| flappy game (on-device, personal best)                                           | GUCentral (replaces Dino) | B      | 3                            | Stub                                                          |
-| offline polish, Arabic/RTL, tablet layouts                                       | new                       | B      | 3                            | Responsive layout hook built; RTL/offline polish not yet      |
+## Phase 0 (shared, built in the foundation)
+
+| Feature                                                                       | Owner                                                                    | Status                                                                 |
+| ----------------------------------------------------------------------------- | ------------------------------------------------------------------------ | ---------------------------------------------------------------------- |
+| auth: login, stored credentials, silent re-login, biometric unlock, demo mode | shared                                                                   | **Built** (mock strategy only — see [DISCOVERY](DISCOVERY.md) Spike 1) |
+| settings (theme, sign out, unofficial notice)                                 | Track B, built early (see [ADR S-003](adr/S-003-feature-conventions.md)) | **Built**                                                              |
 
 ## Deliberately out of scope for this foundation
 
@@ -33,3 +26,8 @@
 - **Any real live parser.** Every feature ships mock-first; live parsers get written
   against sanitized fixtures captured with the in-app tool, one at a time, gated on
   the DISCOVERY spikes that unblock them (see each feature's README).
+
+## Adding to the roadmap
+
+A row that's genuinely shared (affects both tracks, or is core infrastructure)
+goes here. Everything else goes in your own track's file.

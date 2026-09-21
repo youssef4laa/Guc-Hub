@@ -1,4 +1,4 @@
-# ADR-001: Stack
+# ADR S-001: Stack
 
 ## Status
 

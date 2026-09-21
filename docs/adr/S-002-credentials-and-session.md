@@ -1,4 +1,4 @@
-# ADR-002: Credential storage and session model
+# ADR S-002: Credential storage and session model
 
 ## Status
 
@@ -29,12 +29,12 @@ back on for session management. This is the single highest-risk part of the app.
   the `auth` feature folder.** It's cross-cutting — `settings` needs `logout()`, the
   root layout needs `isAuthenticated` for route guarding — and the ESLint boundaries
   rule forbids one feature importing another's internals. `src/features/auth/` owns
-  only the login screen UI. (This is also recorded in ADR-003 as a template
+  only the login screen UI. (This is also recorded in ADR S-003 as a template
   deviation.)
 - **A redaction wrapper on every logger call** (`core/logging/redact.ts`) strips
   anything shaped like a password, token, or cookie before it can reach a log line,
   as defense in depth against a future accidental `console.log(credentials)`.
-- **The network allowlist is a separate, independent safeguard** (ADR-001's
+- **The network allowlist is a separate, independent safeguard** (ADR S-001's
   `core/http`): even if a bug somehow produced the wrong URL, `gucFetch` refuses any
   host not explicitly configured.
 
