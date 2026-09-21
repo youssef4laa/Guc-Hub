@@ -1,7 +1,7 @@
 import * as SQLite from "expo-sqlite";
 
 import { createLogger } from "../logging";
-import type { Migration } from "./migrations";
+import { featureMigrations } from "./migrations.generated";
 import { runMigrations } from "./migrations";
 
 const log = createLogger("storage-db");
@@ -9,18 +9,17 @@ const log = createLogger("storage-db");
 let dbInstance: SQLite.SQLiteDatabase | null = null;
 
 /**
- * Opens the single app database and applies every feature's migrations, in order.
- * Call once at startup with the merged list from all feature manifests
- * (the registry generator collects `migrations` exports the same way it collects
- * `manifest.ts`).
+ * Opens the single app database and applies every feature's migrations (from
+ * `migrations.generated.ts`, which `tools/gen-registry.js` builds by statically
+ * importing each feature's own `migrations.ts` — nobody edits a shared list).
  */
-export async function openDatabase(migrations: Migration[]): Promise<SQLite.SQLiteDatabase> {
+export async function openDatabase(): Promise<SQLite.SQLiteDatabase> {
   if (dbInstance) return dbInstance;
   const db = await SQLite.openDatabaseAsync("guc-hub.db");
   await db.execAsync("PRAGMA journal_mode = WAL;");
-  await runMigrations(db, migrations);
+  await runMigrations(db, featureMigrations);
   dbInstance = db;
-  log.info("database ready", { migrationCount: migrations.length });
+  log.info("database ready", { featureCount: featureMigrations.length });
   return db;
 }
 

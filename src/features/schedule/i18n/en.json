@@ -1,0 +1,7 @@
+{
+  "schedule": {
+    "title": "Schedule",
+    "nextClass": "Next class",
+    "noClassesToday": "No classes today"
+  }
+}

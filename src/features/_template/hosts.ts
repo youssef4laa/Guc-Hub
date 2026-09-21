@@ -1,0 +1,11 @@
+/**
+ * Hosts this feature's live source needs `core/http` to allow. Declared here, not
+ * in `core/http/config.ts` — `tools/gen-registry.js` aggregates every feature's
+ * list into `src/core/http/hosts.generated.ts`. Add a host by editing only this
+ * file (and, if it's a new one, your own block of `.env.example`).
+ *
+ * Example: `[process.env.EXPO_PUBLIC_GUC_PORTAL_HOST].filter(Boolean)`. Leave
+ * empty if this feature never calls `gucFetch` directly (e.g. it only reads
+ * local storage).
+ */
+export const hosts: string[] = [];

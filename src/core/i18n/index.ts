@@ -1,13 +1,17 @@
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
 
-import en from "./en.json";
+import { en } from "./resources.generated";
 
 /**
  * English only for now. Layouts must still use logical properties (start/end,
  * marginStart/marginEnd — never left/right) via `core/ui`, so adding Arabic later
  * is a resource-file swap, not a layout rewrite. Timezone is fixed to Africa/Cairo
  * since every GUC deadline is quoted in it regardless of device locale.
+ *
+ * Strings live in `core/i18n/common.en.json` (shared UI-kit copy) and each
+ * feature's own `i18n/en.json` (tools/gen-registry.js merges them into
+ * `resources.generated.ts`) — nobody edits a single shared locale file.
  */
 export const TIMEZONE = "Africa/Cairo";
 

@@ -1,0 +1,11 @@
+{
+  "auth": {
+    "title": "Sign in to GUC Hub",
+    "usernameLabel": "GUC ID or email",
+    "passwordLabel": "Password",
+    "signIn": "Sign in",
+    "tryDemo": "Try demo",
+    "biometricUnlock": "Unlock with Face ID / Touch ID",
+    "invalidCredentials": "Incorrect username or password."
+  }
+}

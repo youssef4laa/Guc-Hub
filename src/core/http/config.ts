@@ -1,14 +1,17 @@
 import Constants from "expo-constants";
 
+import { featureHosts } from "./hosts.generated";
+
 /**
- * Every host the app is allowed to talk to. Production hosts come from env config;
+ * Every host the app is allowed to talk to. The list itself comes from each
+ * feature's own `hosts.ts` (aggregated by tools/gen-registry.js into
+ * `hosts.generated.ts`) — this file never lists a literal hostname, so adding
+ * one never means editing this shared file.
  * `EXPO_PUBLIC_HTTP_DEV_ALLOWLIST` (comma-separated) adds hosts for local testing
  * against a proxy/fixture server and is read only in dev builds.
  */
 function readAllowlist(): string[] {
-  const base = [process.env.EXPO_PUBLIC_GUC_PORTAL_HOST, process.env.EXPO_PUBLIC_GUC_MAIL_HOST].filter(
-    (host): host is string => Boolean(host),
-  );
+  const base = [...new Set(featureHosts)];
 
   const devAllowlist: string | undefined = process.env.EXPO_PUBLIC_HTTP_DEV_ALLOWLIST;
   if (__DEV__ && devAllowlist) {

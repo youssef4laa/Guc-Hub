@@ -86,6 +86,23 @@ module.exports = defineConfig([
     },
   },
   {
-    ignores: ["dist/*", "src/core/registry/registry.generated.ts", "fixtures/**/raw.local/**", ".expo/**"],
+    files: ["src/core/http/__tests__/aggregateHosts.test.ts"],
+    rules: {
+      // This test deliberately reaches into a feature to prove the
+      // hosts.ts -> hosts.generated.ts contract holds — the one sanctioned
+      // exception to "core never imports feature".
+      "boundaries/dependencies": "off",
+    },
+  },
+  {
+    ignores: [
+      "dist/*",
+      "src/core/registry/registry.generated.ts",
+      "src/core/i18n/resources.generated.ts",
+      "src/core/http/hosts.generated.ts",
+      "src/core/storage/migrations.generated.ts",
+      "fixtures/**/raw.local/**",
+      ".expo/**",
+    ],
   },
 ]);
