@@ -14,6 +14,11 @@ function toPascalCase(name) {
   return name.replace(/(^|-)([a-z])/g, (_, __, letter) => letter.toUpperCase());
 }
 
+function toCamelCase(name) {
+  const pascal = toPascalCase(name);
+  return pascal.charAt(0).toLowerCase() + pascal.slice(1);
+}
+
 function copyAndRewrite(src, dest, replacements) {
   fs.mkdirSync(dest, { recursive: true });
   for (const entry of fs.readdirSync(src, { withFileTypes: true })) {
@@ -32,7 +37,12 @@ function copyAndRewrite(src, dest, replacements) {
     content = content
       .replace(/_template/g, replacements.kebab)
       .replace(/Template/g, replacements.pascal)
-      .replace(/template/g, replacements.kebab);
+      // "templateItemSchema"-style identifiers need camelCase, not kebab-case
+      // (a hyphen isn't a legal identifier character) — must run before the
+      // word-boundary replace below, which handles kebab-appropriate prose
+      // and CSS-class-like tokens such as ".template-item".
+      .replace(/template(?=[A-Z])/g, replacements.camel)
+      .replace(/\btemplate\b/g, replacements.kebab);
 
     if (destName === "manifest.ts") {
       content = content.replace(
@@ -58,7 +68,11 @@ function main() {
     process.exit(1);
   }
 
-  copyAndRewrite(TEMPLATE_DIR, destDir, { kebab: name, pascal: toPascalCase(name) });
+  copyAndRewrite(TEMPLATE_DIR, destDir, {
+    kebab: name,
+    pascal: toPascalCase(name),
+    camel: toCamelCase(name),
+  });
 
   const fixturesDir = path.join(ROOT, "fixtures", name, "raw");
   fs.mkdirSync(fixturesDir, { recursive: true });
