@@ -1,0 +1,13 @@
+appId: com.guchub.app
+---
+# Smoke flow for demo mode — run against a dev-client build with
+# EXPO_PUBLIC_MODE=mock. Exercises the one thing that must never break: a
+# reviewer/dev tapping "Try demo" and landing on a working Schedule tab.
+- launchApp
+- assertVisible: "Sign in to GUC Hub"
+- tapOn: "Try demo"
+- assertVisible: "Schedule"
+- assertVisible: "NEXT CLASS"
+- tapOn: "More"
+- assertVisible: "Grades"
+- assertVisible: "Coming soon"

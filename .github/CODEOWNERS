@@ -1,0 +1,32 @@
+# See docs/CONTRIBUTING.md for the full track breakdown.
+# Replace @dev-a / @dev-b with real GitHub handles before the first real PR.
+
+# Track A: Portal
+/src/features/schedule/       @dev-a
+/src/features/grades/         @dev-a
+/src/features/transcript/     @dev-a
+/src/features/cms/            @dev-a
+/src/features/exams/          @dev-a
+/src/features/attendance/     @dev-a
+/src/features/staff/          @dev-a
+/src/features/evaluations/    @dev-a
+
+# Track B: Mail & Experience
+/src/features/mail/           @dev-b
+/src/features/flappy/         @dev-b
+/src/features/settings/       @dev-b
+/src/core/ui/                 @dev-b
+/src/core/notifications/      @dev-b
+/src/core/theme/              @dev-b
+
+# Shared — needs review from both
+/src/core/http/               @dev-a @dev-b
+/src/core/storage/            @dev-a @dev-b
+/src/core/query/              @dev-a @dev-b
+/src/core/portal/             @dev-a @dev-b
+/src/features/auth/           @dev-a @dev-b
+/app/                         @dev-a @dev-b
+/package.json                 @dev-a @dev-b
+/tsconfig.json                @dev-a @dev-b
+/eslint.config.js             @dev-a @dev-b
+/.github/                     @dev-a @dev-b
