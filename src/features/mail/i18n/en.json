@@ -57,6 +57,13 @@
     "delete": "Delete",
     "undo": "Undo",
     "deleted_one": "1 message deleted",
-    "deleted_other": "{{count}} messages deleted"
+    "deleted_other": "{{count}} messages deleted",
+    "selectedCount_one": "{{count}} selected",
+    "selectedCount_other": "{{count}} selected",
+    "selectAll": "Select all",
+    "selectNone": "Clear selection",
+    "cancelSelection": "Leave selection mode",
+    "markRead": "Mark as read",
+    "markUnread": "Mark as unread"
   }
 }

@@ -18,6 +18,9 @@ export interface MessageListProps {
   selectedId: string | null;
   onSelect: (id: string) => void;
   onDelete: (id: string) => void;
+  onLongPress: (id: string) => void;
+  selectionMode: boolean;
+  selectedIds: string[];
   onRefresh: () => void;
   onEndReached: () => void;
 }
@@ -34,6 +37,9 @@ export function MessageList({
   selectedId,
   onSelect,
   onDelete,
+  onLongPress,
+  selectionMode,
+  selectedIds,
   onRefresh,
   onEndReached,
 }: MessageListProps) {
@@ -67,6 +73,9 @@ export function MessageList({
           selected={item.id === selectedId}
           onPress={() => onSelect(item.id)}
           onDelete={() => onDelete(item.id)}
+          onLongPress={() => onLongPress(item.id)}
+          selectionMode={selectionMode}
+          checked={selectedIds.includes(item.id)}
         />
       )}
       refreshControl={

@@ -13,12 +13,19 @@ export function MessageListItem({
   selected,
   onPress,
   onDelete,
+  onLongPress,
+  selectionMode = false,
+  checked = false,
 }: {
   message: MailSummary;
   selected: boolean;
   onPress: () => void;
   /** When given, exposes delete as an accessibility action — swiping isn't reachable with a screen reader. */
   onDelete?: () => void;
+  onLongPress?: () => void;
+  /** In selection mode a tap toggles the checkbox instead of opening the message. */
+  selectionMode?: boolean;
+  checked?: boolean;
 }) {
   const { theme } = useTheme();
   const { t } = useTranslation();
@@ -34,14 +41,16 @@ export function MessageListItem({
 
   return (
     <Pressable
-      accessibilityRole="button"
-      accessibilityState={{ selected }}
+      accessibilityRole={selectionMode ? "checkbox" : "button"}
+      accessibilityState={selectionMode ? { checked } : { selected }}
       accessibilityLabel={message.hasAttachments ? `${label} ${t("mail.withAttachments")}.` : label}
       accessibilityActions={onDelete ? [{ name: "delete", label: t("mail.delete") }] : undefined}
       onAccessibilityAction={(event) => {
         if (event.nativeEvent.actionName === "delete") onDelete?.();
       }}
       onPress={onPress}
+      onLongPress={onLongPress}
+      delayLongPress={350}
       style={({ pressed }) => ({
         flexDirection: "row",
         gap: theme.spacing.sm,
@@ -52,17 +61,28 @@ export function MessageListItem({
         backgroundColor: selected || pressed ? theme.colors.surface : "transparent",
       })}
     >
-      <View
-        accessibilityElementsHidden
-        importantForAccessibility="no"
-        style={{
-          width: 8,
-          height: 8,
-          borderRadius: 4,
-          marginTop: 7,
-          backgroundColor: message.isRead ? "transparent" : theme.colors.primary,
-        }}
-      />
+      {selectionMode ? (
+        <Ionicons
+          accessibilityElementsHidden
+          importantForAccessibility="no"
+          name={checked ? "checkbox" : "square-outline"}
+          size={20}
+          color={checked ? theme.colors.primary : theme.colors.textMuted}
+          style={{ marginTop: 2 }}
+        />
+      ) : (
+        <View
+          accessibilityElementsHidden
+          importantForAccessibility="no"
+          style={{
+            width: 8,
+            height: 8,
+            borderRadius: 4,
+            marginTop: 7,
+            backgroundColor: message.isRead ? "transparent" : theme.colors.primary,
+          }}
+        />
+      )}
       <View style={{ flex: 1, gap: 2 }}>
         <View style={{ flexDirection: "row", alignItems: "center", gap: theme.spacing.sm }}>
           <Text numberOfLines={1} style={{ flex: 1, fontWeight: message.isRead ? "400" : "700" }}>

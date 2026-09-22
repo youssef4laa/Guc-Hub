@@ -17,14 +17,35 @@ export function SwipeableMessageRow({
   selected,
   onPress,
   onDelete,
+  onLongPress,
+  selectionMode = false,
+  checked = false,
 }: {
   message: MailSummary;
   selected: boolean;
   onPress: () => void;
   onDelete: () => void;
+  onLongPress?: () => void;
+  selectionMode?: boolean;
+  checked?: boolean;
 }) {
   const { theme } = useTheme();
   const swipeable = useRef<SwipeableMethods | null>(null);
+
+  const row = (
+    <MessageListItem
+      message={message}
+      selected={selected}
+      onPress={onPress}
+      onDelete={onDelete}
+      onLongPress={onLongPress}
+      selectionMode={selectionMode}
+      checked={checked}
+    />
+  );
+
+  // Swiping a row while picking several would fight the selection gesture.
+  if (selectionMode) return row;
 
   return (
     <Swipeable
@@ -52,9 +73,7 @@ export function SwipeableMessageRow({
         </View>
       )}
     >
-      <View style={{ backgroundColor: theme.colors.background }}>
-        <MessageListItem message={message} selected={selected} onPress={onPress} onDelete={onDelete} />
-      </View>
+      <View style={{ backgroundColor: theme.colors.background }}>{row}</View>
     </Swipeable>
   );
 }
