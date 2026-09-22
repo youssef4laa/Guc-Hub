@@ -14,6 +14,7 @@ import {
   writeCachedMessage,
   writeCachedSummaries,
 } from "./cache/mailCache";
+import { saveAttachmentToCache, shareCachedFile } from "./attachments/attachmentFile";
 import type { MailFolder, MailPage, MailSort, OutgoingMessage } from "./schema";
 import { getMailProvider } from "./source";
 
@@ -154,6 +155,29 @@ export function useSendMessage() {
       await deleteDraft(draftId);
       void queryClient.invalidateQueries({ queryKey: mailKeys.folders() });
       void queryClient.invalidateQueries({ queryKey: mailKeys.lists() });
+    },
+  });
+}
+
+/**
+ * Downloads one attachment, caches it under a sanitised name, and hands it to
+ * the OS share sheet. The caller is responsible for confirming with the reader
+ * first — see MessageReader, and security/attachments.ts for why.
+ */
+export function useShareAttachment() {
+  return useMutation({
+    mutationFn: async ({
+      messageId,
+      attachmentId,
+      dialogTitle,
+    }: {
+      messageId: string;
+      attachmentId: string;
+      dialogTitle: string;
+    }) => {
+      const content = await (await getMailProvider()).getAttachment(messageId, attachmentId);
+      const uri = saveAttachmentToCache(content);
+      await shareCachedFile(uri, content.mimeType, dialogTitle);
     },
   });
 }

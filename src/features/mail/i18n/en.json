@@ -20,7 +20,6 @@
     "cc": "Cc",
     "attachments_one": "{{count}} attachment",
     "attachments_other": "{{count}} attachments",
-    "attachmentsLater": "Opening attachments is coming in a later version.",
     "remoteBlocked_one": "1 remote image was blocked to protect your privacy.",
     "remoteBlocked_other": "{{count}} remote images were blocked to protect your privacy.",
     "loadImages": "Load images",
@@ -47,6 +46,13 @@
     "sendFailed": "Couldn't send this message.",
     "errorNoRecipients": "Add at least one recipient.",
     "errorInvalidAddress": "These don't look like email addresses: {{entries}}",
-    "errorAttachmentsTooLarge": "The attachments are too large to send."
+    "errorAttachmentsTooLarge": "The attachments are too large to send.",
+    "share": "Share",
+    "shareMessage": "Share this message",
+    "openAttachmentTitle": "Share this attachment?",
+    "openAttachmentLabel": "Attachment {{name}}, {{size}}. Opens the share sheet.",
+    "attachmentExecutableWarning": "This is a .{{extension}} file, which your device may try to run. Only open it if you trust the sender.",
+    "attachmentDoubleExtensionWarning": "This file hides a second extension and is really a .{{extension}} file. Treat it with caution.",
+    "attachmentFailed": "Couldn't open that attachment."
   }
 }
