@@ -33,6 +33,20 @@
     "unreadStatus": "Unread. ",
     "withAttachments": "Has attachments",
     "folderLabel_one": "{{name}}, {{count}} unread",
-    "folderLabel_other": "{{name}}, {{count}} unread"
+    "folderLabel_other": "{{name}}, {{count}} unread",
+    "compose": "New message",
+    "composeNew": "Write a new message",
+    "send": "Send",
+    "discard": "Close",
+    "subject": "Subject",
+    "body": "Message",
+    "bcc": "Bcc",
+    "addCcBcc": "Add Cc/Bcc",
+    "addAttachment": "Attach file",
+    "removeAttachment": "Remove {{name}}",
+    "sendFailed": "Couldn't send this message.",
+    "errorNoRecipients": "Add at least one recipient.",
+    "errorInvalidAddress": "These don't look like email addresses: {{entries}}",
+    "errorAttachmentsTooLarge": "The attachments are too large to send."
   }
 }

@@ -6,6 +6,7 @@ import {
   type InfiniteData,
 } from "@tanstack/react-query";
 
+import { deleteDraft } from "./cache/draftCache";
 import {
   readCachedMessage,
   readCachedSummaries,
@@ -13,7 +14,7 @@ import {
   writeCachedMessage,
   writeCachedSummaries,
 } from "./cache/mailCache";
-import type { MailFolder, MailPage, MailSort } from "./schema";
+import type { MailFolder, MailPage, MailSort, OutgoingMessage } from "./schema";
 import { getMailProvider } from "./source";
 
 export const mailKeys = {
@@ -138,6 +139,21 @@ export function useMarkRead() {
     },
     onSettled: () => {
       void queryClient.invalidateQueries({ queryKey: mailKeys.folders() });
+    },
+  });
+}
+
+/** Sends, then clears the local draft and refreshes the folders (Sent gains a message). */
+export function useSendMessage() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ message }: { draftId: string; message: OutgoingMessage }) =>
+      (await getMailProvider()).send(message),
+    onSuccess: async (_result, { draftId }) => {
+      await deleteDraft(draftId);
+      void queryClient.invalidateQueries({ queryKey: mailKeys.folders() });
+      void queryClient.invalidateQueries({ queryKey: mailKeys.lists() });
     },
   });
 }
