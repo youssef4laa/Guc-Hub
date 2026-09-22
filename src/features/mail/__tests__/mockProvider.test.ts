@@ -166,6 +166,31 @@ describe("delete and undo", () => {
   });
 });
 
+describe("attachments", () => {
+  it("returns content for an attachment the message actually has", async () => {
+    const p = provider();
+    const withAttachment = (
+      await p.listMessages({ folderId: "inbox", sort: "newest", pageSize: 50 })
+    ).messages.find((m) => m.hasAttachments)!;
+    const message = await p.getMessage(withAttachment.id);
+    const attachment = message.attachments[0];
+
+    const content = await p.getAttachment(message.id, attachment.id);
+
+    expect(content.filename).toBe(attachment.filename);
+    expect(content.mimeType).toBe(attachment.mimeType);
+    expect(content.base64.length).toBeGreaterThan(0);
+    // Valid base64 that decodes to the demo placeholder.
+    expect(atob(content.base64)).toContain(attachment.filename);
+  });
+
+  it("rejects an unknown attachment with a typed error", async () => {
+    const p = provider();
+    const message = (await p.listMessages({ folderId: "inbox", sort: "newest", pageSize: 1 })).messages[0];
+    await expect(p.getAttachment(message.id, "nope")).rejects.toBeInstanceOf(PortalError);
+  });
+});
+
 describe("send", () => {
   it("puts the sent message in the Sent folder", async () => {
     const p = provider();

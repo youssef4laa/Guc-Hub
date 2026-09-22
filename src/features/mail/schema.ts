@@ -29,6 +29,13 @@ export const attachmentMetaSchema = z.object({
 });
 export type AttachmentMeta = z.infer<typeof attachmentMetaSchema>;
 
+/** An attachment's bytes, fetched on demand — never carried in a message summary. */
+export const attachmentContentSchema = attachmentMetaSchema.extend({
+  /** Base64, written to the app's own cache directory before it is shared. */
+  base64: z.string(),
+});
+export type AttachmentContent = z.infer<typeof attachmentContentSchema>;
+
 /** What the list needs — never the body, so a page of these stays small. */
 export const mailSummarySchema = z.object({
   id: z.string(),

@@ -12,6 +12,7 @@ import {
   type UndoToken,
 } from "./provider";
 import {
+  type AttachmentContent,
   mailFolderSchema,
   mailMessageSchema,
   outgoingMessageSchema,
@@ -100,6 +101,20 @@ export class MockMailProvider implements MailProvider {
     return JSON.parse(JSON.stringify(message)) as MailMessage;
   }
 
+  async getAttachment(messageId: string, attachmentId: string): Promise<AttachmentContent> {
+    await this.delay();
+    const message = this.messages.find((m) => m.id === messageId);
+    const attachment = message?.attachments.find((a) => a.id === attachmentId);
+    if (!attachment) throw new PortalError("PORTAL_UNAVAILABLE", "That attachment is no longer available.");
+
+    // Demo mode has no real bytes: synthesise readable placeholder content so the
+    // download-and-share path can be exercised end to end without a server.
+    const placeholder =
+      `This is a placeholder for "${attachment.filename}" from the Guc Hub demo mailbox.\n` +
+      `No real attachment content exists in demo mode.\n`;
+    return { ...attachment, base64: toBase64(placeholder) };
+  }
+
   async search({ query, folderId, sort, cursor, pageSize }: SearchMessagesOptions): Promise<MailPage> {
     await this.delay();
     const terms = query.toLowerCase().split(/\s+/).filter(Boolean);
@@ -186,6 +201,15 @@ export class MockMailProvider implements MailProvider {
     if (this.latencyMs <= 0) return Promise.resolve();
     return new Promise((resolve) => setTimeout(resolve, this.latencyMs));
   }
+}
+
+/**
+ * Hermes has no Buffer, and TextEncoder differs between Hermes and Node, so this
+ * sticks to btoa over ASCII. Demo placeholder content only — a real provider will
+ * return the server's own base64.
+ */
+function toBase64(text: string): string {
+  return btoa(text.replace(/[^\x20-\x7e\n]/g, "?"));
 }
 
 function toSummary({

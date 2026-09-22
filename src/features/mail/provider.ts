@@ -1,4 +1,11 @@
-import type { MailFolder, MailMessage, MailPage, MailSort, OutgoingMessage } from "./schema";
+import type {
+  AttachmentContent,
+  MailFolder,
+  MailMessage,
+  MailPage,
+  MailSort,
+  OutgoingMessage,
+} from "./schema";
 
 export interface ListMessagesOptions {
   folderId: string;
@@ -32,6 +39,8 @@ export interface MailProvider {
   listFolders(): Promise<MailFolder[]>;
   listMessages(options: ListMessagesOptions): Promise<MailPage>;
   getMessage(id: string): Promise<MailMessage>;
+  /** Fetches one attachment's bytes. Callers must respect security/attachments.ts. */
+  getAttachment(messageId: string, attachmentId: string): Promise<AttachmentContent>;
   search(options: SearchMessagesOptions): Promise<MailPage>;
   markRead(ids: string[], isRead: boolean): Promise<void>;
   /** Moves to Trash (or removes, if already there). Undoable until the next delete. */

@@ -18,6 +18,7 @@ export const liveMailProvider: MailProvider = {
   listFolders: async () => notConnected(),
   listMessages: async () => notConnected(),
   getMessage: async () => notConnected(),
+  getAttachment: async () => notConnected(),
   search: async () => notConnected(),
   markRead: async () => notConnected(),
   deleteMessages: async () => notConnected(),
