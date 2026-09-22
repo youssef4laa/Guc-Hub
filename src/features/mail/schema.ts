@@ -85,6 +85,22 @@ export const outgoingAttachmentSchema = z.object({
 });
 export type OutgoingAttachment = z.infer<typeof outgoingAttachmentSchema>;
 
+/**
+ * A message being written. Recipients stay as raw text while it's a draft, so a
+ * half-typed address survives autosave; they're parsed when it is sent.
+ */
+export const mailDraftSchema = z.object({
+  id: z.string(),
+  to: z.string(),
+  cc: z.string(),
+  bcc: z.string(),
+  subject: z.string(),
+  text: z.string(),
+  attachments: z.array(outgoingAttachmentSchema),
+  updatedAt: z.iso.datetime({ offset: true }),
+});
+export type MailDraft = z.infer<typeof mailDraftSchema>;
+
 export const outgoingMessageSchema = z.object({
   to: z.array(mailAddressSchema).min(1),
   cc: z.array(mailAddressSchema),

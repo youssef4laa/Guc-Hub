@@ -30,4 +30,18 @@ export const migrations: Migration[] = [
       `);
     },
   },
+  {
+    version: 2,
+    name: "create_mail_drafts",
+    up: async (db) => {
+      await db.execAsync(`
+        CREATE TABLE IF NOT EXISTS mail_drafts (
+          id TEXT PRIMARY KEY NOT NULL,
+          data TEXT NOT NULL,
+          updated_at INTEGER NOT NULL
+        );
+        CREATE INDEX IF NOT EXISTS mail_drafts_updated ON mail_drafts (updated_at DESC);
+      `);
+    },
+  },
 ];
