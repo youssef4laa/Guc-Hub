@@ -1,0 +1,38 @@
+{
+  "mail": {
+    "title": "Mail",
+    "searchPlaceholder": "Search mail",
+    "clearSearch": "Clear search",
+    "folders": "Folders",
+    "sortBy": "Sort by",
+    "sort": {
+      "newest": "Newest",
+      "oldest": "Oldest",
+      "sender": "Sender",
+      "unread": "Unread first"
+    },
+    "emptyFolder": "No messages here",
+    "emptySearch": "No messages match “{{query}}”",
+    "selectMessage": "Select a message to read it",
+    "back": "Back",
+    "noSubject": "(no subject)",
+    "to": "To",
+    "cc": "Cc",
+    "attachments_one": "{{count}} attachment",
+    "attachments_other": "{{count}} attachments",
+    "attachmentsLater": "Opening attachments is coming in a later version.",
+    "remoteBlocked_one": "1 remote image was blocked to protect your privacy.",
+    "remoteBlocked_other": "{{count}} remote images were blocked to protect your privacy.",
+    "loadImages": "Load images",
+    "openLinkTitle": "Open link?",
+    "openLinkMessage": "This link goes to {{host}}:\n\n{{url}}",
+    "cancel": "Cancel",
+    "open": "Open",
+    "showingCached": "Couldn't refresh. Showing saved messages.",
+    "rowLabel": "{{status}}From {{sender}}. {{subject}}. {{date}}.",
+    "unreadStatus": "Unread. ",
+    "withAttachments": "Has attachments",
+    "folderLabel_one": "{{name}}, {{count}} unread",
+    "folderLabel_other": "{{name}}, {{count}} unread"
+  }
+}
