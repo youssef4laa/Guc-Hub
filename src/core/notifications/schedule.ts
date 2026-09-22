@@ -1,6 +1,7 @@
 import * as Notifications from "expo-notifications";
 
 import { createLogger } from "../logging";
+import type { ReminderInput } from "./plan";
 
 const log = createLogger("notifications");
 
@@ -13,13 +14,9 @@ Notifications.setNotificationHandler({
   }),
 });
 
-export interface ReminderInput {
-  /** Stable id (e.g. `class:${courseId}:${dayOfWeek}` or `exam:${examId}`) so re-scheduling replaces, not duplicates. */
-  id: string;
-  title: string;
-  body: string;
-  fireAt: Date;
-}
+// Defined in plan.ts (which stays free of native imports so the timing rules can
+// be unit-tested); re-exported here so existing `from "./schedule"` imports keep working.
+export type { ReminderInput };
 
 /**
  * Local-only reminders (there is no server, so no push — see docs/ARCHITECTURE.md
@@ -31,7 +28,10 @@ export async function requestNotificationPermission(): Promise<boolean> {
   return status === "granted";
 }
 
-export async function scheduleReminder(reminder: ReminderInput): Promise<void> {
+export async function scheduleReminder(
+  reminder: ReminderInput,
+  { channelId }: { channelId?: string } = {},
+): Promise<void> {
   if (reminder.fireAt.getTime() <= Date.now()) {
     log.warn("skipped reminder in the past", { id: reminder.id });
     return;
@@ -40,7 +40,7 @@ export async function scheduleReminder(reminder: ReminderInput): Promise<void> {
   await Notifications.scheduleNotificationAsync({
     identifier: reminder.id,
     content: { title: reminder.title, body: reminder.body },
-    trigger: { type: Notifications.SchedulableTriggerInputTypes.DATE, date: reminder.fireAt },
+    trigger: { type: Notifications.SchedulableTriggerInputTypes.DATE, date: reminder.fireAt, channelId },
   });
 }
 

@@ -1,13 +1,13 @@
 # Roadmap — Track B (Mail & Experience)
 
-| Feature                                                                 | Source                    | Phase | Status                                                                                |
-| ----------------------------------------------------------------------- | ------------------------- | ----- | ------------------------------------------------------------------------------------- |
-| mail: list, read, search, sort, safe HTML rendering                     | Unimail                   | 1     | **Built on mock data** behind `enabled: false`; live provider blocked on Spike 2      |
-| mail: compose, attachments, swipe-delete with undo, share, multi-select | Unimail                   | 2     | Stub                                                                                  |
-| local reminders (exams, custom events) + best-effort background refresh | —                         | 2     | Class reminders already built under `schedule` (Track A); exams/custom events not yet |
-| home-screen widgets (WidgetKit / Glance)                                | GUCentral                 | 3     | Not started — see [spike-widgets.md](../discovery/spike-widgets.md)                   |
-| flappy game (on-device, personal best)                                  | GUCentral (replaces Dino) | 3     | Stub                                                                                  |
-| offline polish, Arabic/RTL, tablet layouts                              | new                       | 3     | Responsive layout hook built; RTL/offline polish not yet                              |
+| Feature                                                                 | Source                    | Phase | Status                                                                                                                                                                                          |
+| ----------------------------------------------------------------------- | ------------------------- | ----- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| mail: list, read, search, sort, safe HTML rendering                     | Unimail                   | 1     | **Built on mock data** behind `enabled: false`; live provider blocked on Spike 2                                                                                                                |
+| mail: compose, attachments, swipe-delete with undo, share, multi-select | Unimail                   | 2     | Stub                                                                                                                                                                                            |
+| local reminders (exams, custom events) + best-effort background refresh | —                         | 2     | **Scheduling helpers built** in `core/notifications` (weekly + dated, Cairo-time, budget-capped); silent change detection ruled out — see [spike 5](../discovery/spike-5-background-refresh.md) |
+| home-screen widgets (WidgetKit / Glance)                                | GUCentral                 | 3     | Researched, not prototyped — [spike-widgets.md](../discovery/spike-widgets.md) recommends iOS-first via first-party `expo-widgets`                                                              |
+| flappy game (on-device, personal best)                                  | GUCentral (replaces Dino) | 3     | Stub                                                                                                                                                                                            |
+| offline polish, Arabic/RTL, tablet layouts                              | new                       | 3     | Responsive layout hook built; RTL/offline polish not yet                                                                                                                                        |
 
 ## Shared changes this track needs
 
