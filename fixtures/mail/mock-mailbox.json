@@ -1,0 +1,281 @@
+{
+  "$comment": "Entirely fake mailbox for demo mode and tests. Every name, address, course and message is invented; addresses use the reserved .invalid TLD, links use IANA-reserved example.* domains, and remote images point at hosts that cannot resolve. Dates are rebased by MockMailProvider so the newest message is always recent.",
+  "folders": [
+    { "id": "inbox", "name": "Inbox", "role": "inbox" },
+    { "id": "sent", "name": "Sent", "role": "sent" },
+    { "id": "archive", "name": "Archive", "role": "archive" },
+    { "id": "trash", "name": "Trash", "role": "trash" }
+  ],
+  "messages": [
+    {
+      "id": "m-001",
+      "folderId": "inbox",
+      "subject": "CSEN 401 — Lab 4 moved to Thursday",
+      "from": { "name": "Eng. Ahmed Rizk", "address": "ahmed.rizk@example-guc.invalid" },
+      "to": [{ "name": "Demo Student", "address": "demo.student@example-guc.invalid" }],
+      "cc": [],
+      "date": "2026-09-21T10:40:00+03:00",
+      "isRead": false,
+      "isFlagged": true,
+      "body": {
+        "kind": "html",
+        "html": "<p>Dear all,</p><p>Because of the career fair, <strong>Lab 4 (Socket Programming)</strong> is moved from Wednesday to <strong>Thursday, 1:00–3:00 PM in C7 Lab 1</strong>.</p><p>Please pull the updated starter code before the lab. The submission deadline is unchanged.</p><p>Best regards,<br>Ahmed Rizk<br>Teaching Assistant, CSEN 401</p>"
+      },
+      "attachments": [
+        { "id": "a-001", "filename": "lab4-starter.zip", "mimeType": "application/zip", "sizeBytes": 48213 }
+      ]
+    },
+    {
+      "id": "m-002",
+      "folderId": "inbox",
+      "subject": "Student Activities Weekly — Robotics club tryouts, movie night & more",
+      "from": { "name": "Student Activities Newsletter", "address": "newsletter@example-guc.invalid" },
+      "to": [{ "name": "All Students", "address": "all-students@example-guc.invalid" }],
+      "cc": [],
+      "date": "2026-09-21T08:15:00+03:00",
+      "isRead": false,
+      "isFlagged": false,
+      "body": {
+        "kind": "html",
+        "html": "<html><head><style>.hero{background:url(https://images.example.invalid/newsletter/hero.jpg) center/cover;padding:32px;color:#fff}.card{border:1px solid #e1e3e8;border-radius:8px;padding:12px;margin:12px 0}</style><script>document.write('tracked')</script></head><body bgcolor=\"#f5f6f8\"><div class=\"hero\"><h1>This week on campus</h1></div><img src=\"https://images.example.invalid/newsletter/banner.png\" alt=\"Newsletter banner\" width=\"600\"><div class=\"card\"><h2>Robotics club tryouts</h2><p>Tryouts are on Sunday at 4 PM in the workshop. No experience needed.</p><a href=\"https://example.org/robotics-signup\" target=\"_blank\" onclick=\"steal()\">Sign up here</a></div><div class=\"card\"><h2>Movie night</h2><p>Outdoor screening on the football field, Tuesday 7 PM. Bring a blanket!</p></div><p style=\"font-size:12px;color:#5b616e\">You're receiving this because you're a student. <a href=\"https://example.com/unsubscribe\">Unsubscribe</a></p><img src=\"https://tracker.example.invalid/open.gif?id=demo\" width=\"1\" height=\"1\" alt=\"\"></body></html>"
+      },
+      "attachments": []
+    },
+    {
+      "id": "m-003",
+      "folderId": "inbox",
+      "subject": "Midterm exam schedule (tentative)",
+      "from": { "name": "Examinations Office", "address": "exams@example-guc.invalid" },
+      "to": [{ "name": "Demo Student", "address": "demo.student@example-guc.invalid" }],
+      "cc": [],
+      "date": "2026-09-20T15:02:00+03:00",
+      "isRead": false,
+      "isFlagged": false,
+      "body": {
+        "kind": "html",
+        "html": "<p>Dear student,</p><p>The <em>tentative</em> midterm schedule is below. Rooms and seat numbers will be announced one week before exams.</p><table border=\"1\" cellpadding=\"6\" style=\"border-collapse:collapse\"><tr><th>Course</th><th>Date</th><th>Time</th></tr><tr><td>CSEN 401 Computer Networks</td><td>Oct 18</td><td>9:00 AM</td></tr><tr><td>MATH 251 Probability &amp; Statistics</td><td>Oct 20</td><td>12:00 PM</td></tr><tr><td>CSEN 403 Operating Systems</td><td>Oct 22</td><td>9:00 AM</td></tr></table><p>Always check the official portal for the final schedule.</p>"
+      },
+      "attachments": []
+    },
+    {
+      "id": "m-004",
+      "folderId": "inbox",
+      "subject": "Re: Question about assignment 2",
+      "from": { "name": "Dr. Sara Nabil", "address": "sara.nabil@example-guc.invalid" },
+      "to": [{ "name": "Demo Student", "address": "demo.student@example-guc.invalid" }],
+      "cc": [{ "name": "Eng. Omar Hany", "address": "omar.hany@example-guc.invalid" }],
+      "date": "2026-09-19T21:34:00+03:00",
+      "isRead": true,
+      "isFlagged": false,
+      "body": {
+        "kind": "text",
+        "text": "Hi,\n\nYes, you may use pthreads for part B, but the scheduler in part A must be your own implementation.\n\nOffice hours are Monday 11–12 if you'd like to go over your design.\n\nSara Nabil\n\n> On Sep 19, Demo Student wrote:\n> Can we use pthreads for the worker pool in assignment 2?"
+      },
+      "attachments": []
+    },
+    {
+      "id": "m-005",
+      "folderId": "inbox",
+      "subject": "Library: 2 books due in 3 days",
+      "from": { "name": "Library Services", "address": "library@example-guc.invalid" },
+      "to": [{ "name": "Demo Student", "address": "demo.student@example-guc.invalid" }],
+      "cc": [],
+      "date": "2026-09-19T09:00:00+03:00",
+      "isRead": true,
+      "isFlagged": false,
+      "body": {
+        "kind": "html",
+        "html": "<p>This is a reminder that the following items are due soon:</p><ul><li><em>Computer Networking: A Top-Down Approach</em> — due Sep 24</li><li><em>Operating System Concepts</em> — due Sep 24</li></ul><p>You can renew once from the library catalogue.</p>"
+      },
+      "attachments": []
+    },
+    {
+      "id": "m-006",
+      "folderId": "inbox",
+      "subject": "MATH 251 tutorial slides — week 2",
+      "from": { "name": "Eng. Nour Samir", "address": "nour.samir@example-guc.invalid" },
+      "to": [{ "name": "MATH 251 T-12", "address": "math251-t12@example-guc.invalid" }],
+      "cc": [],
+      "date": "2026-09-18T17:45:00+03:00",
+      "isRead": true,
+      "isFlagged": false,
+      "body": {
+        "kind": "text",
+        "text": "Dear all,\n\nAttached are the slides for this week's tutorial on conditional probability and Bayes' rule. Practice sheet 2 is due before next tutorial.\n\nNour"
+      },
+      "attachments": [
+        {
+          "id": "a-006a",
+          "filename": "math251-tutorial-02.pdf",
+          "mimeType": "application/pdf",
+          "sizeBytes": 1843200
+        },
+        {
+          "id": "a-006b",
+          "filename": "practice-sheet-02.pdf",
+          "mimeType": "application/pdf",
+          "sizeBytes": 214800
+        }
+      ]
+    },
+    {
+      "id": "m-007",
+      "folderId": "inbox",
+      "subject": "Registration hold reminder",
+      "from": { "name": "Student Affairs", "address": "student.affairs@example-guc.invalid" },
+      "to": [{ "name": "Demo Student", "address": "demo.student@example-guc.invalid" }],
+      "cc": [],
+      "date": "2026-09-17T12:10:00+03:00",
+      "isRead": false,
+      "isFlagged": false,
+      "body": {
+        "kind": "html",
+        "html": "<p>Dear student,</p><p>Our records show a pending document for your file. Please visit the Student Affairs office in building B during working hours. This message is a demo — no action is needed.</p>"
+      },
+      "attachments": []
+    },
+    {
+      "id": "m-008",
+      "folderId": "inbox",
+      "subject": "Team formation for the MGT 201 project",
+      "from": { "name": "Dr. Yasmine Tarek", "address": "yasmine.tarek@example-guc.invalid" },
+      "to": [{ "name": "MGT 201", "address": "mgt201@example-guc.invalid" }],
+      "cc": [],
+      "date": "2026-09-16T11:20:00+03:00",
+      "isRead": true,
+      "isFlagged": false,
+      "body": {
+        "kind": "html",
+        "html": "<p>Please form teams of 4–5 and submit your team list by <strong>Sep 28</strong>. Each team will analyse the economics of a small engineering project of its choice.</p><p>Guidelines: <a href=\"https://example.org/mgt201/guidelines\">project guidelines</a>.</p>"
+      },
+      "attachments": []
+    },
+    {
+      "id": "m-009",
+      "folderId": "inbox",
+      "subject": "Your IT account password will expire soon",
+      "from": { "name": "IT Helpdesk", "address": "helpdesk@example-guc.invalid" },
+      "to": [{ "name": "Demo Student", "address": "demo.student@example-guc.invalid" }],
+      "cc": [],
+      "date": "2026-09-15T08:30:00+03:00",
+      "isRead": true,
+      "isFlagged": false,
+      "body": {
+        "kind": "html",
+        "html": "<p>Your password expires in 14 days. Change it from the official account page.</p><p>The IT helpdesk will <strong>never</strong> ask for your password by email. Before opening a link, check where it really goes — Guc Hub always shows you the full address first.</p><p><a href=\"https://example.com/account\">Account settings</a></p>"
+      },
+      "attachments": []
+    },
+    {
+      "id": "m-010",
+      "folderId": "inbox",
+      "subject": "Welcome back! Semester starts Saturday",
+      "from": { "name": "Dean of Students", "address": "dean.students@example-guc.invalid" },
+      "to": [{ "name": "All Students", "address": "all-students@example-guc.invalid" }],
+      "cc": [],
+      "date": "2026-09-12T10:00:00+03:00",
+      "isRead": true,
+      "isFlagged": false,
+      "body": {
+        "kind": "html",
+        "html": "<h2>Welcome back</h2><p>We hope you had a restful break. Classes begin on Saturday; schedules are available on the portal.</p><p>Wishing you a great semester.</p>"
+      },
+      "attachments": []
+    },
+    {
+      "id": "m-011",
+      "folderId": "inbox",
+      "subject": "Lost & found: blue water bottle in C6",
+      "from": { "name": "Campus Services", "address": "campus.services@example-guc.invalid" },
+      "to": [{ "name": "All Students", "address": "all-students@example-guc.invalid" }],
+      "cc": [],
+      "date": "2026-09-10T14:25:00+03:00",
+      "isRead": true,
+      "isFlagged": false,
+      "body": {
+        "kind": "text",
+        "text": "A blue water bottle was found in C6.104. Collect it from the security desk at gate 3."
+      },
+      "attachments": []
+    },
+    {
+      "id": "m-012",
+      "folderId": "inbox",
+      "subject": "CSEN 403 — office hours this week",
+      "from": { "name": "Eng. Omar Hany", "address": "omar.hany@example-guc.invalid" },
+      "to": [{ "name": "CSEN 403", "address": "csen403@example-guc.invalid" }],
+      "cc": [],
+      "date": "2026-09-08T16:05:00+03:00",
+      "isRead": true,
+      "isFlagged": false,
+      "body": {
+        "kind": "text",
+        "text": "Office hours this week: Sunday 2–3 PM and Tuesday 10–11 AM in C5.212."
+      },
+      "attachments": []
+    },
+    {
+      "id": "m-101",
+      "folderId": "sent",
+      "subject": "Question about assignment 2",
+      "from": { "name": "Demo Student", "address": "demo.student@example-guc.invalid" },
+      "to": [{ "name": "Dr. Sara Nabil", "address": "sara.nabil@example-guc.invalid" }],
+      "cc": [],
+      "date": "2026-09-19T18:12:00+03:00",
+      "isRead": true,
+      "isFlagged": false,
+      "body": {
+        "kind": "text",
+        "text": "Dear Dr. Sara,\n\nCan we use pthreads for the worker pool in assignment 2?\n\nThank you,\nDemo Student"
+      },
+      "attachments": []
+    },
+    {
+      "id": "m-102",
+      "folderId": "sent",
+      "subject": "MGT 201 team list",
+      "from": { "name": "Demo Student", "address": "demo.student@example-guc.invalid" },
+      "to": [{ "name": "Dr. Yasmine Tarek", "address": "yasmine.tarek@example-guc.invalid" }],
+      "cc": [],
+      "date": "2026-09-17T13:40:00+03:00",
+      "isRead": true,
+      "isFlagged": false,
+      "body": {
+        "kind": "text",
+        "text": "Dear Dr. Yasmine,\n\nOur team: four fake students, names withheld in the demo.\n\nBest,\nDemo Student"
+      },
+      "attachments": []
+    },
+    {
+      "id": "m-201",
+      "folderId": "archive",
+      "subject": "Summer internship certificate",
+      "from": { "name": "Career Center", "address": "careers@example-guc.invalid" },
+      "to": [{ "name": "Demo Student", "address": "demo.student@example-guc.invalid" }],
+      "cc": [],
+      "date": "2026-08-02T11:00:00+03:00",
+      "isRead": true,
+      "isFlagged": false,
+      "body": {
+        "kind": "text",
+        "text": "Your internship certificate is attached. Congratulations on completing the programme!"
+      },
+      "attachments": [
+        { "id": "a-201", "filename": "certificate.pdf", "mimeType": "application/pdf", "sizeBytes": 96400 }
+      ]
+    },
+    {
+      "id": "m-301",
+      "folderId": "trash",
+      "subject": "Flash sale on campus merch",
+      "from": { "name": "Campus Store", "address": "store@example-guc.invalid" },
+      "to": [{ "name": "All Students", "address": "all-students@example-guc.invalid" }],
+      "cc": [],
+      "date": "2026-09-05T09:00:00+03:00",
+      "isRead": true,
+      "isFlagged": false,
+      "body": { "kind": "text", "text": "Hoodies 20% off this week only." },
+      "attachments": []
+    }
+  ]
+}
