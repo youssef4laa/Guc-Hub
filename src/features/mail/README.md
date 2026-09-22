@@ -2,7 +2,7 @@
 
 Owner: Track B (mail & experience). Source: Unimail.
 
-Phase 1 is built and runs entirely on mock data. `manifest.enabled` stays `false`
+Phases 1 and 2 are built and run entirely on mock data. `manifest.enabled` stays `false`
 until the owner approves it, so it ships merged-safe: reachable from "More" in a
 dev build, absent from the tab bar.
 
@@ -23,6 +23,25 @@ because mail is an API/protocol, not an HTML page to scrape. The seam is a
 - `schema.ts` — zod schemas; `logic/` — pure sorting, text and formatting
   helpers; `cache/` — the local SQLite cache; `store.ts` — TanStack Query hooks.
 - `security/` — see below. `components/`, `screens/`, `hooks/` — UI.
+- `attachments/` — writes a downloaded attachment into the app's cache and hands
+  it to the OS share sheet.
+
+## Phase 2
+
+- **Compose** (`screens/ComposeScreen.tsx`): to/cc/bcc, subject, body, and an
+  attachment picker (`expo-document-picker`). Drafts autosave to SQLite 800ms
+  after typing stops and again on unmount; an untouched draft is never written.
+  `logic/recipients.ts` and `logic/draft.ts` hold the parsing and validation.
+- **Attachments**: tapping one downloads it, caches it under a sanitised name and
+  opens the share sheet — after a confirmation that warns about executables and
+  double extensions. Nothing is ever opened or executed by the app.
+- **Swipe to delete** with a six-second undo bar, backed by the provider's
+  `deleteMessages`/`undoDelete`. Delete is also an accessibility action, since a
+  swipe isn't reachable with a screen reader.
+- **Share** a message as plain text (never its untrusted HTML).
+- **Multi-select**: long-press to enter, bulk delete and bulk mark read/unread.
+  The selection is derived from the visible list, so a message that disappears in
+  a refresh drops out of it.
 
 ## Rendering untrusted email safely
 
@@ -67,9 +86,10 @@ be reached.
 - Mail queries are also persisted by the shared TanStack AsyncStorage persister,
   so bodies would be stored twice once mail is live. Needs a `shared/` change to
   let a feature opt out of persistence.
-- Attachments are listed but can't be opened yet (phase 2).
-- Compose, swipe-to-delete with undo, share and multi-select are phase 2. The
-  provider already defines `send`, `deleteMessages` and `undoDelete`, with tests.
+- Drafts are local only: there is no "Drafts" folder view yet, and drafts are
+  never synced to the server (`listDrafts` exists but nothing lists them).
+- Compose can't reply or forward yet, and sends plain text only.
+- Attachments open through the share sheet rather than an in-app preview.
 
 ## Blocked on
 
