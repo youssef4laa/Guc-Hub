@@ -52,6 +52,12 @@ const config = {
   },
   extra: {
     router: {},
+    // Public identifier for the EAS project (@mokhalifa05/guc-hub), not a
+    // secret — it ships inside every build. Written by hand because `eas init`
+    // can't edit a dynamic config.
+    eas: {
+      projectId: "888f8a9a-3761-46db-a944-60077b98cf75",
+    },
   },
 };
 
