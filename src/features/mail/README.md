@@ -6,6 +6,49 @@ Phases 1 and 2 are built and run entirely on mock data. `manifest.enabled` stays
 until the owner approves it, so it ships merged-safe: reachable from "More" in a
 dev build, absent from the tab bar.
 
+## Status as of 22 September 2026 — read this first
+
+**Code-complete, and not once run on a device or a simulator.** Phase 1 (list,
+read, search, sort, safe HTML) and phase 2 (compose, attachments,
+swipe-to-delete with undo, share, multi-select) are finished and the 171 unit
+tests pass, but every one of those tests is a Node test of pure logic. No part of
+this UI has rendered on real hardware.
+
+Treat anything that only a device can exercise as unverified:
+
+- the swipe gesture and its undo window (`ReanimatedSwipeable`),
+- the document picker, the OS share sheet, and writing attachment bytes to the
+  app cache,
+- `KeyboardAvoidingView` in compose — the layout most likely to be wrong,
+- draft autosave against a real SQLite database rather than the fail-soft stubs,
+- every accessibility affordance: labels, the delete action, the undo
+  announcement,
+- the two-pane tablet layout.
+
+What the unit tests _do_ cover is the part that would be dangerous to get wrong:
+HTML and CSS sanitizing against a hostile fixture, the navigation policy,
+attachment filename and type classification, recipient parsing, draft validation,
+selection maths, sorting, and reminder planning.
+
+**Why it is untested:** local iOS builds fail before the app starts. Under the
+iOS 27 SDK, UIKit terminates any app that hasn't adopted the scene lifecycle, and
+Expo SDK 57 keeps that adoption behind an opt-in. The fix is two commits on
+`shared/ios-scene-lifecycle` (`expo-build-properties` with
+`ios.enableSceneSupport`, plus the EAS project id that cloud builds need) and is
+awaiting review. Nothing on this branch causes or can fix that — it is app-wide
+native config in shared files.
+
+**This is still safe to merge.** `manifest.enabled` is `false`, so none of it is
+reachable from the tab bar; it changes no shared file and no Track A path. It
+should not be enabled for anyone until it has been driven on a device.
+
+Two follow-ups are unresolved and already written up rather than repeated here:
+`useAuth` does not expose the stored credential that a live provider would need,
+and NTLM is a single shared mechanism that Track A needs too — see
+[ADR B-001](../../../docs/adr/B-001-mail-protocol.md) and
+[spike 2](../../../docs/discovery/spike-2-mail-protocol.md). Both block
+`EwsMailProvider`; neither blocks this branch.
+
 ## Shape
 
 This feature deviates from the `_template` triad: there is no `parser.ts`,
@@ -107,8 +150,9 @@ be reached.
 - [x] Mock source returns realistic (but fake) data
 - [x] Loading / empty / error / cached-fallback states all render
 - [x] Untrusted HTML rendering is sanitized, CSP'd, JS-disabled, and tested
-- [x] Screen-reader labels on interactive elements
-- [x] Two-pane layout on tablets, single pane on phones
+- [x] Screen-reader labels on interactive elements _(written, never heard)_
+- [x] Two-pane layout on tablets, single pane on phones _(never rendered)_
+- [ ] Run on a device or simulator — blocked, see "Status" above
 - [ ] Live provider (blocked on Spike 2)
 - [ ] iOS + Android screenshots, light + dark
 - [ ] `manifest.enabled` flipped to `true` (needs owner approval)
