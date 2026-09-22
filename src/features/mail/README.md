@@ -73,9 +73,13 @@ be reached.
 
 ## Blocked on
 
-- **[Spike 2](../../../docs/discovery/spike-2-mail-protocol.md)** — which
-  protocol and login the real mailbox uses. Until it resolves, `live.ts` stays a
-  stub and no GUC hostname is assumed anywhere in this folder.
+- **[Spike 2](../../../docs/discovery/spike-2-mail-protocol.md) is resolved:**
+  mail is on-premises Exchange 2019, and the transport is EWS
+  ([ADR B-001](../../../docs/adr/B-001-mail-protocol.md)).
+- **Still blocked on NTLM authentication.** The EWS endpoint offers only
+  Negotiate/NTLM, which React Native's `fetch` cannot drive; the mechanism is
+  shared with Track A's spike 1 and must not be implemented twice. Until it
+  exists, `live.ts` stays a stub.
 
 ## Definition of done
 

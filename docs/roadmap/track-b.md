@@ -15,6 +15,11 @@ Both are small `shared/` PRs, to be announced and reviewed before they land
 (see [PARALLEL_WORK.md](../PARALLEL_WORK.md)). Neither blocks phase 1, because
 only fake demo data is cached today:
 
+0. **An NTLM-capable request path, shared with Track A.** Spike 2 resolved: mail
+   is on-premises Exchange and its EWS endpoint offers only Negotiate/NTLM, which
+   is the same handshake Track A needs for the portal (spike 1). Whatever lands
+   there — a native module or a hidden WebView — should be reusable by mail
+   rather than implemented twice.
 1. **Clear feature data on sign-out.** `core/portal`'s `logout()` has no hook, so
    the mail cache (and the persisted TanStack cache) survive signing out. Needs a
    logout hook in `core/portal` or a "clear feature data" API in `core/storage`.
