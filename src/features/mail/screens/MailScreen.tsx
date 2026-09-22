@@ -10,7 +10,9 @@ import { MessageList } from "../components/MessageList";
 import { MessageReader, NoMessageSelected } from "../components/MessageReader";
 import { SearchBar } from "../components/SearchBar";
 import { SortBar } from "../components/SortBar";
+import { UndoBar } from "../components/UndoBar";
 import { useDebouncedValue } from "../hooks/useDebouncedValue";
+import { useDeleteWithUndo } from "../hooks/useDeleteWithUndo";
 import { useMailLayout } from "../hooks/useMailLayout";
 import type { MailSort } from "../schema";
 import { useMailFolders, useMessageList } from "../store";
@@ -34,6 +36,12 @@ export function MailScreen() {
   const activeFolderId = folderId || defaultFolderId;
 
   const { list, messages, isShowingCached } = useMessageList({ folderId: activeFolderId, sort, query });
+  const deletion = useDeleteWithUndo();
+
+  const deleteMessage = (id: string) => {
+    if (selectedId === id) setSelectedId(null);
+    deletion.remove([id]);
+  };
 
   // On phones the reader replaces the list, so Android's back button should
   // return to the list rather than leaving the tab.
@@ -88,6 +96,7 @@ export function MailScreen() {
         query={query}
         selectedId={selectedId}
         onSelect={setSelectedId}
+        onDelete={deleteMessage}
         onRefresh={() => list.refetch()}
         onEndReached={() => list.fetchNextPage()}
       />
@@ -102,6 +111,8 @@ export function MailScreen() {
     );
   }
 
+  const undoBar = deletion.pending ? <UndoBar count={deletion.pending.count} onUndo={deletion.undo} /> : null;
+
   if (twoPane) {
     return (
       <Screen style={{ padding: 0 }}>
@@ -112,6 +123,7 @@ export function MailScreen() {
             {selectedId ? <MessageReader key={selectedId} id={selectedId} /> : <NoMessageSelected />}
           </View>
         </View>
+        {undoBar}
       </Screen>
     );
   }
@@ -121,7 +133,10 @@ export function MailScreen() {
       {selectedId ? (
         <MessageReader key={selectedId} id={selectedId} onBack={() => setSelectedId(null)} />
       ) : (
-        <View style={{ flex: 1, paddingHorizontal: theme.spacing.lg }}>{mailbox}</View>
+        <>
+          <View style={{ flex: 1, paddingHorizontal: theme.spacing.lg }}>{mailbox}</View>
+          {undoBar}
+        </>
       )}
     </Screen>
   );

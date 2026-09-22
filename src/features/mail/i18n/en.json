@@ -53,6 +53,10 @@
     "openAttachmentLabel": "Attachment {{name}}, {{size}}. Opens the share sheet.",
     "attachmentExecutableWarning": "This is a .{{extension}} file, which your device may try to run. Only open it if you trust the sender.",
     "attachmentDoubleExtensionWarning": "This file hides a second extension and is really a .{{extension}} file. Treat it with caution.",
-    "attachmentFailed": "Couldn't open that attachment."
+    "attachmentFailed": "Couldn't open that attachment.",
+    "delete": "Delete",
+    "undo": "Undo",
+    "deleted_one": "1 message deleted",
+    "deleted_other": "{{count}} messages deleted"
   }
 }

@@ -16,6 +16,7 @@ import {
 } from "./cache/mailCache";
 import { saveAttachmentToCache, shareCachedFile } from "./attachments/attachmentFile";
 import type { MailFolder, MailPage, MailSort, OutgoingMessage } from "./schema";
+import type { UndoToken } from "./provider";
 import { getMailProvider } from "./source";
 
 export const mailKeys = {
@@ -178,6 +179,62 @@ export function useShareAttachment() {
       const content = await (await getMailProvider()).getAttachment(messageId, attachmentId);
       const uri = saveAttachmentToCache(content);
       await shareCachedFile(uri, content.mimeType, dialogTitle);
+    },
+  });
+}
+
+/** Removes the given ids from every cached list, so the row disappears at once. */
+function removeFromLists(queryClient: ReturnType<typeof useQueryClient>, ids: string[]): void {
+  queryClient.setQueriesData<InfiniteData<MailPage>>({ queryKey: mailKeys.lists() }, (data) =>
+    data
+      ? {
+          ...data,
+          pages: data.pages.map((page) => ({
+            ...page,
+            messages: page.messages.filter((message) => !ids.includes(message.id)),
+          })),
+        }
+      : data,
+  );
+}
+
+/**
+ * Deletes optimistically and hands back an undo token. Nothing is confirmed up
+ * front: the undo bar is the confirmation, which keeps the common case (a
+ * deliberate swipe) free of dialogs.
+ */
+export function useDeleteMessages() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ ids }: { ids: string[] }) => (await getMailProvider()).deleteMessages(ids),
+    onMutate: async ({ ids }) => {
+      await queryClient.cancelQueries({ queryKey: mailKeys.lists() });
+      const previousLists = queryClient.getQueriesData<InfiniteData<MailPage>>({
+        queryKey: mailKeys.lists(),
+      });
+      removeFromLists(queryClient, ids);
+      return { previousLists };
+    },
+    onError: (_error, _variables, context) => {
+      // Put the rows back: the server never accepted the delete.
+      for (const [key, data] of context?.previousLists ?? []) queryClient.setQueryData(key, data);
+    },
+    onSettled: () => {
+      void queryClient.invalidateQueries({ queryKey: mailKeys.folders() });
+    },
+  });
+}
+
+export function useUndoDelete() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ token }: { token: UndoToken }) => (await getMailProvider()).undoDelete(token),
+    onSuccess: () => {
+      // The restored messages may belong to any folder, so refetch rather than guess.
+      void queryClient.invalidateQueries({ queryKey: mailKeys.lists() });
+      void queryClient.invalidateQueries({ queryKey: mailKeys.folders() });
     },
   });
 }

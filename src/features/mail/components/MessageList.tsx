@@ -4,7 +4,7 @@ import { ActivityIndicator, FlatList, RefreshControl, View } from "react-native"
 import { useTheme } from "../../../core/theme";
 import { EmptyState, ErrorState, Skeleton, Text } from "../../../core/ui";
 import type { MailSummary } from "../schema";
-import { MessageListItem } from "./MessageListItem";
+import { SwipeableMessageRow } from "./SwipeableMessageRow";
 
 export interface MessageListProps {
   messages: MailSummary[] | undefined;
@@ -17,6 +17,7 @@ export interface MessageListProps {
   query: string;
   selectedId: string | null;
   onSelect: (id: string) => void;
+  onDelete: (id: string) => void;
   onRefresh: () => void;
   onEndReached: () => void;
 }
@@ -32,6 +33,7 @@ export function MessageList({
   query,
   selectedId,
   onSelect,
+  onDelete,
   onRefresh,
   onEndReached,
 }: MessageListProps) {
@@ -60,7 +62,12 @@ export function MessageList({
       data={messages ?? []}
       keyExtractor={(item) => item.id}
       renderItem={({ item }) => (
-        <MessageListItem message={item} selected={item.id === selectedId} onPress={() => onSelect(item.id)} />
+        <SwipeableMessageRow
+          message={item}
+          selected={item.id === selectedId}
+          onPress={() => onSelect(item.id)}
+          onDelete={() => onDelete(item.id)}
+        />
       )}
       refreshControl={
         <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} tintColor={theme.colors.textMuted} />

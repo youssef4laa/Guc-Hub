@@ -12,10 +12,13 @@ export function MessageListItem({
   message,
   selected,
   onPress,
+  onDelete,
 }: {
   message: MailSummary;
   selected: boolean;
   onPress: () => void;
+  /** When given, exposes delete as an accessibility action — swiping isn't reachable with a screen reader. */
+  onDelete?: () => void;
 }) {
   const { theme } = useTheme();
   const { t } = useTranslation();
@@ -34,6 +37,10 @@ export function MessageListItem({
       accessibilityRole="button"
       accessibilityState={{ selected }}
       accessibilityLabel={message.hasAttachments ? `${label} ${t("mail.withAttachments")}.` : label}
+      accessibilityActions={onDelete ? [{ name: "delete", label: t("mail.delete") }] : undefined}
+      onAccessibilityAction={(event) => {
+        if (event.nativeEvent.actionName === "delete") onDelete?.();
+      }}
       onPress={onPress}
       style={({ pressed }) => ({
         flexDirection: "row",
