@@ -15,11 +15,13 @@ Both are small `shared/` PRs, to be announced and reviewed before they land
 (see [PARALLEL_WORK.md](../PARALLEL_WORK.md)). Neither blocks phase 1, because
 only fake demo data is cached today:
 
-0. **An NTLM-capable request path, shared with Track A.** Spike 2 resolved: mail
-   is on-premises Exchange and its EWS endpoint offers only Negotiate/NTLM, which
-   is the same handshake Track A needs for the portal (spike 1). Whatever lands
-   there — a native module or a hidden WebView — should be reusable by mail
-   rather than implemented twice.
+0. **An NTLM-capable request path, shared with Track A — decided, native half
+   pending.** Mail's EWS endpoint offers only Negotiate/NTLM, the same handshake
+   the portal needs. [ADR A-001](../adr/A-001-portal-auth.md) makes
+   `ntlmRequest` (`src/core/portal/ntlm/`, JS side on `main`) the one transport
+   for both; it reads the stored credential itself, so mail needs nothing from
+   `useAuth`. What's left is Track A's native module, `modules/guc-ntlm/`; until
+   it exists, `ntlmRequest` throws `NOT_IMPLEMENTED`.
 1. **Clear feature data on sign-out.** `core/portal`'s `logout()` has no hook, so
    the mail cache (and the persisted TanStack cache) survive signing out. Needs a
    logout hook in `core/portal` or a "clear feature data" API in `core/storage`.
