@@ -6,10 +6,14 @@
 Basic, a plain HTML form + session cookie, or some SSO flow? Does the _mail_
 login differ from the _portal_ login (host, or an email address vs. a student ID)?
 
-**Known so far (from Track B's Spike 2):** GUC mail is on-prem Exchange 2019
-(server headers + IronPort MX + the OWA login URL). EWS on that server accepts
-NTLM, not Basic. So NTLM is already a certainty for mail, and the portal is
-_likely_ IIS-fronted too — but that is a guess until the probe below says so.
+**Known so far (from Track B's [ADR B-001](../adr/B-001-mail-protocol.md), on
+their branch):** GUC mail is on-prem Exchange 2019. An unauthenticated probe of
+`/EWS/Exchange.asmx` returns `401` with `WWW-Authenticate: Negotiate, NTLM` and
+**no Basic**. So NTLM is already a certainty for mail — an NTLM transport gets
+built regardless of what the portal turns out to be. Whether the _portal_ is
+NTLM too is still unknown until the probe below says so. B-001 also states the
+mail credential is the same username/password the portal uses (username without
+a domain suffix), which this doc relies on below.
 
 ## Step 1 — run the probe (you, on a real phone, no credentials involved)
 
@@ -21,9 +25,16 @@ _names_, and cookie _names_ only — never a value — so it is safe to paste.
    To probe the mail host too, also set `EXPO_PUBLIC_GUC_MAIL_HOST=<host>`.
 2. Run a dev build (`pnpm start`; on Android `pnpm exec expo run:android`, on
    iOS use the EAS simulator/dev build — see README).
-3. Open the probe: it lives at `/dev/auth-probe`. Deep link it:
+3. Open the probe: it lives at `/dev/auth-probe`. **Launch the app first and
+   sign in via Try demo, then** deep link it (or type the route in the dev menu):
    - Android: `adb shell am start -a android.intent.action.VIEW -d "guchub:///dev/auth-probe"`
    - iOS simulator: `xcrun simctl openurl booted "guchub:///dev/auth-probe"`
+
+   Do not use the deep link to cold-start the app on iOS: with the scene
+   lifecycle enabled (`shared/ios-scene-lifecycle`, needed for iOS 27), SDK 57's
+   `Linking.getInitialURL()` resolves to `null` on a cold start, so the link is
+   silently dropped. Warm links (app already running) work.
+
 4. The URL box is prefilled with `https://<portal host>/`. Tap **Run probe**.
    Long-press the output to select and copy it. Run it once for the portal's
    root, once for the URL you normally open to see your grades/schedule login
@@ -83,16 +94,18 @@ interface NtlmResponse {
   body: string;
 }
 /** Credentials are read from secure storage INSIDE the transport; callers never see a password. */
-function ntlmRequest(req: NtlmRequest, opts?: { account?: "portal" | "mail" }): Promise<NtlmResponse>;
+function ntlmRequest(req: NtlmRequest): Promise<NtlmResponse>;
 ```
 
 Open questions to settle with Track B before building:
 
-1. **One credential set or two?** `core/storage/secureStore.ts` stores one
-   `{username, password}`. If the mail login differs from the portal login
-   (email vs. student ID; likely `DOMAIN\user`), we need a second slot
-   (`account: "mail"`). That touches `core/storage` (shared) — a separate
-   `shared/` PR.
+1. **One credential set or two? — settled: one.** B-001 says mail uses the same
+   credential as the portal, so no second slot in `core/storage` and no
+   `account` option. Mail also does not need `useAuth` to expose the password:
+   the transport reads the stored credential itself, so nothing outside
+   `core/portal` ever handles it. (This answers B-001's `needs-track-a` request
+   without widening `useAuth`.) Reopen only if the portal probe shows the portal
+   login differs from the mail login.
 2. **Domain/workstation for NTLMv2:** unknown until we see a real challenge;
    the transport should accept an optional `domain` and default to parsing it
    from the username (`DOMAIN\user` or `user@domain`).
