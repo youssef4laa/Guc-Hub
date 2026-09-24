@@ -11,7 +11,8 @@ their branch):** GUC mail is on-prem Exchange 2019. An unauthenticated probe of
 `/EWS/Exchange.asmx` returns `401` with `WWW-Authenticate: Negotiate, NTLM` and
 **no Basic**. So NTLM is already a certainty for mail — an NTLM transport gets
 built regardless of what the portal turns out to be. Whether the _portal_ is
-NTLM too is still unknown until the probe below says so. B-001 also states the
+NTLM too is still unknown: do not infer it from mail. Only the probe output
+decides. B-001 also states the
 mail credential is the same username/password the portal uses (username without
 a domain suffix), which this doc relies on below.
 
@@ -99,13 +100,14 @@ function ntlmRequest(req: NtlmRequest): Promise<NtlmResponse>;
 
 Open questions to settle with Track B before building:
 
-1. **One credential set or two? — settled: one.** B-001 says mail uses the same
-   credential as the portal, so no second slot in `core/storage` and no
-   `account` option. Mail also does not need `useAuth` to expose the password:
+1. **One credential set or two? — confirmed: one.** The mail login is the same
+   username and password as the portal login (assumed in B-001, confirmed by the
+   user on 2026-09-24). So there is no second slot in `core/storage` and no
+   `account` option. Mail does not need `useAuth` to expose the password either:
    the transport reads the stored credential itself, so nothing outside
-   `core/portal` ever handles it. (This answers B-001's `needs-track-a` request
-   without widening `useAuth`.) Reopen only if the portal probe shows the portal
-   login differs from the mail login.
+   `core/portal` ever handles it. This answers B-001's `needs-track-a` request
+   without widening `useAuth`. It says **nothing** about which auth scheme the
+   portal uses — that stays open until the probe runs.
 2. **Domain/workstation for NTLMv2:** unknown until we see a real challenge;
    the transport should accept an optional `domain` and default to parsing it
    from the username (`DOMAIN\user` or `user@domain`).
