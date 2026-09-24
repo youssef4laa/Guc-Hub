@@ -1,0 +1,21 @@
+plugins {
+  id 'com.android.library'
+  id 'expo-module-gradle-plugin'
+}
+
+group = 'com.guchub'
+version = '0.1.0'
+
+android {
+  namespace "expo.modules.gucntlm"
+  defaultConfig {
+    versionCode 1
+    versionName '0.1.0'
+  }
+}
+
+dependencies {
+  // OkHttp comes transitively from react-android, the same way Expo's own fetch
+  // module gets it, so this module never pins its own OkHttp version.
+  implementation 'com.facebook.react:react-android'
+}
