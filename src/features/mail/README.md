@@ -42,12 +42,15 @@ native config in shared files.
 reachable from the tab bar; it changes no shared file and no Track A path. It
 should not be enabled for anyone until it has been driven on a device.
 
-Two follow-ups are unresolved and already written up rather than repeated here:
-`useAuth` does not expose the stored credential that a live provider would need,
-and NTLM is a single shared mechanism that Track A needs too — see
-[ADR B-001](../../../docs/adr/B-001-mail-protocol.md) and
-[spike 2](../../../docs/discovery/spike-2-mail-protocol.md). Both block
-`EwsMailProvider`; neither blocks this branch.
+**The live transport is decided.** [ADR A-001](../../../docs/adr/A-001-portal-auth.md)
+makes `ntlmRequest` (`src/core/portal/ntlm/`) the one NTLM transport for both
+the portal and mail, and its JS side is on `main`. It reads the stored
+credential itself, so mail never handles the password and needs nothing from
+`useAuth`; it also enforces the host allowlist and https on every hop. That
+settles the two follow-ups [ADR B-001](../../../docs/adr/B-001-mail-protocol.md)
+left open. `EwsMailProvider` can now be written against `ntlmRequest`, but it
+can't run until the native half (`modules/guc-ntlm`) exists; until then
+`ntlmRequest` throws `NOT_IMPLEMENTED`. None of this blocks this branch.
 
 ## Shape
 
