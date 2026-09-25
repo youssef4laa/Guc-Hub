@@ -12,6 +12,7 @@
 /src/features/staff/          @youssef4laa
 /src/features/evaluations/    @youssef4laa
 /src/core/portal/             @youssef4laa
+/modules/guc-ntlm/            @youssef4laa @mokhalifa9
 /config/plugins.portal.js     @youssef4laa
 /docs/roadmap/track-a.md      @youssef4laa
 /docs/adr/A-*                 @youssef4laa

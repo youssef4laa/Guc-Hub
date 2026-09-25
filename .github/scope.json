@@ -30,6 +30,7 @@
         "fixtures/staff/**",
         "fixtures/evaluations/**",
         "src/core/portal/**",
+        "modules/guc-ntlm/**",
         "src/core/http/**",
         "config/plugins.portal.js",
         "docs/discovery/spike-1*.md",
