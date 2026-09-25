@@ -1,25 +1,82 @@
+import { DisallowedHostError } from "../../http/client";
 import type { LoginResult, LoginStrategy, PortalCookieJar, PortalCredentials } from "../LoginStrategy";
+import { getNativeNtlm } from "../ntlm/nativeBinding";
+import { ntlmRequestWithCredentials, type NtlmRequest, type NtlmResponse } from "../ntlm/ntlmRequest";
+import { PortalError } from "../PortalError";
+
+type RequestWithCredentials = (credentials: PortalCredentials, request: NtlmRequest) => Promise<NtlmResponse>;
 
 /**
- * STUB — do not ship. NTLM is connection-oriented (a multi-step handshake bound to one
- * TCP socket) and React Native's `fetch` cannot express that. Candidates, to spike
- * against a real device before writing this for real (docs/DISCOVERY.md, Spike 1):
- *   1. A native module (Expo Modules API) wrapping NSURLSession / OkHttp, which both
- *      support NTLM natively.
- *   2. A pure-JS NTLM implementation over a raw TCP socket (needs a socket library;
- *      see also Spike 2, which needs the same primitive for IMAP/SMTP).
- *   3. A hidden WebView that performs the NTLM handshake via the OS network stack and
- *      hands back the resulting session cookie.
- * Whichever wins becomes this class; until then it must never be selected outside tests.
+ * NTLM holds no JS-side session: the native transport authenticates each
+ * connection itself and keeps any cookies in memory. This jar is just a marker.
+ */
+class NtlmSessionMarker implements PortalCookieJar {
+  serialize(): string {
+    return "ntlm-native-session";
+  }
+}
+
+function defaultPortalUrl(): string {
+  const host = process.env.EXPO_PUBLIC_GUC_PORTAL_HOST;
+  if (!host) {
+    throw new PortalError(
+      "NOT_IMPLEMENTED",
+      "Set EXPO_PUBLIC_GUC_PORTAL_HOST in .env.local to sign in for real.",
+    );
+  }
+  return `https://${host}/`;
+}
+
+/**
+ * ADR A-001: the portal uses IIS Windows authentication. Signing in = one
+ * authenticated GET of the portal root through the NTLM transport:
+ * - 401 after the handshake -> AUTH_INVALID (raised by the transport),
+ * - 2xx (after allowlisted redirects) -> signed in,
+ * - a redirect to a host that isn't allowlisted, or any other status ->
+ *   PORTAL_UNAVAILABLE, naming what happened so it can be reported back.
  */
 export class NtlmLoginStrategy implements LoginStrategy {
   readonly id = "ntlm";
 
-  async login(_credentials: PortalCredentials): Promise<LoginResult> {
-    throw new Error("NtlmLoginStrategy is a stub. Resolve docs/DISCOVERY.md Spike 1 before implementing.");
+  constructor(
+    private readonly portalUrl: () => string = defaultPortalUrl,
+    private readonly request: RequestWithCredentials = ntlmRequestWithCredentials,
+  ) {}
+
+  async login(credentials: PortalCredentials): Promise<LoginResult> {
+    if (!credentials.username || !credentials.password) {
+      throw new PortalError("AUTH_INVALID", "Username and password are required.");
+    }
+
+    const url = this.portalUrl();
+    let response: NtlmResponse;
+    try {
+      response = await this.request(credentials, { url, method: "GET" });
+    } catch (error) {
+      if (error instanceof DisallowedHostError) {
+        throw new PortalError(
+          "PORTAL_UNAVAILABLE",
+          `Signed-in portal redirected to a host that isn't allowlisted: ${error.message}`,
+          { sourceUrl: url, cause: error },
+        );
+      }
+      throw error;
+    }
+
+    if (response.status >= 200 && response.status < 300) {
+      return { cookieJar: new NtlmSessionMarker() };
+    }
+    throw new PortalError("PORTAL_UNAVAILABLE", `Portal answered ${response.status} after sign-in.`, {
+      sourceUrl: url,
+    });
   }
 
-  async isSessionValid(_cookieJar: PortalCookieJar): Promise<boolean> {
-    throw new Error("NtlmLoginStrategy is a stub.");
+  /** The native layer re-authenticates new connections itself, so there's no JS session to expire. */
+  async isSessionValid(): Promise<boolean> {
+    return true;
+  }
+
+  async logout(): Promise<void> {
+    getNativeNtlm()?.clearSession();
   }
 }

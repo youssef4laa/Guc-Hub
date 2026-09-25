@@ -24,4 +24,6 @@ export interface LoginStrategy {
   login(credentials: PortalCredentials): Promise<LoginResult>;
   /** True if the jar this strategy produced is still usable for a lightweight probe request. */
   isSessionValid(cookieJar: PortalCookieJar): Promise<boolean>;
+  /** Drop any strategy-held session state (e.g. authenticated native connections). */
+  logout?(): Promise<void>;
 }

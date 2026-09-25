@@ -132,3 +132,25 @@ describe("ntlmRequest", () => {
     spies.forEach((s) => s.mockRestore());
   });
 });
+
+describe("ntlmRequestWithCredentials", () => {
+  it("uses the given credential and never reads the stored one", async () => {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const { ntlmRequestWithCredentials } = require("../ntlmRequest");
+    const request = nativeReturning({ status: 200, headers: {}, body: "" });
+    await ntlmRequestWithCredentials(
+      { username: "try.me", password: "candidate" },
+      {
+        url: "https://portal.test.invalid/",
+        method: "GET",
+      },
+    );
+    expect(loadCredentials).not.toHaveBeenCalled();
+    expect(request.mock.calls[0]?.[0]).toMatchObject({ username: "try.me", password: "candidate" });
+  });
+
+  it("is not exported from the public ntlm index", () => {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    expect(Object.keys(require("../index"))).toEqual(["ntlmRequest"]);
+  });
+});

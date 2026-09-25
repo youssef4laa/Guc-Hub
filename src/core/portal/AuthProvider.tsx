@@ -6,6 +6,7 @@ import { hasStoredCredentials, loadCredentials } from "../storage/secureStore";
 import { isDemoMode, setDemoMode } from "./demoMode";
 import type { PortalCredentials } from "./LoginStrategy";
 import { PortalSession } from "./PortalSession";
+import { MockLoginStrategy } from "./strategies/MockLoginStrategy";
 import { selectLoginStrategy } from "./selectLoginStrategy";
 
 const log = createLogger("auth");
@@ -23,6 +24,9 @@ interface AuthContextValue {
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 const session = new PortalSession(selectLoginStrategy());
+// Demo mode must never reach a real server, whatever EXPO_PUBLIC_PORTAL_AUTH_STRATEGY
+// selects: its fake credentials would otherwise be sent to GUC as a login attempt.
+const demoSession = new PortalSession(new MockLoginStrategy());
 
 /**
  * Cross-cutting session state (like theme/query), not a "feature" — this is why it
@@ -54,7 +58,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
 
   const loginWithDemo = async () => {
     await setDemoMode(true);
-    await session.login({ username: "demo-student", password: "demo" }, { persist: false });
+    await demoSession.login({ username: "demo-student", password: "demo" }, { persist: false });
     setDemoModeState(true);
     setIsAuthenticated(true);
     log.info("entered demo mode");
