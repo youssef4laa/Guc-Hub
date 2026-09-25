@@ -1,15 +1,18 @@
 import { isDemoMode } from "../../core/portal/demoMode";
-import type { MailItem } from "./schema";
+import type { MailProvider } from "./provider";
 
-export interface MailSource {
-  fetch(): Promise<MailItem[]>;
-}
+let mockInstance: MailProvider | null = null;
 
-export async function getMailSource(): Promise<MailSource> {
+/** Screens and hooks only ever go through this — never `mock.ts` or `live.ts` directly. */
+export async function getMailProvider(): Promise<MailProvider> {
   if (await isDemoMode()) {
-    const { mockMailSource } = await import("./mock");
-    return mockMailSource;
+    if (!mockInstance) {
+      const { MockMailProvider } = await import("./mock");
+      // One instance per app session, so reads/deletes persist while the demo runs.
+      mockInstance = new MockMailProvider();
+    }
+    return mockInstance;
   }
-  const { liveMailSource } = await import("./live");
-  return liveMailSource;
+  const { liveMailProvider } = await import("./live");
+  return liveMailProvider;
 }
