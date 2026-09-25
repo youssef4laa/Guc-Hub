@@ -1,6 +1,6 @@
 import { DisallowedHostError } from "../../http/client";
 import type { LoginResult, LoginStrategy, PortalCookieJar, PortalCredentials } from "../LoginStrategy";
-import { resetNtlmCircuitBreaker } from "../ntlm/ntlmCircuitBreaker";
+import { noteNtlmLoginSucceeded, noteNtlmSignedOut } from "../ntlm/ntlmCircuitBreaker";
 import { getNativeNtlm } from "../ntlm/nativeBinding";
 import { ntlmRequestWithCredentials, type NtlmRequest, type NtlmResponse } from "../ntlm/ntlmRequest";
 import { PortalError } from "../PortalError";
@@ -86,15 +86,16 @@ export class NtlmLoginStrategy implements LoginStrategy {
 
   async logout(): Promise<void> {
     getNativeNtlm()?.clearSession();
+    noteNtlmSignedOut();
   }
 
   /**
    * Called by PortalSession once a successful login's credential is fully persisted.
-   * A stale in-flight read of the old stored credential can still trip the breaker
-   * in the meantime; clearing it here, last, means that trip doesn't outlive this
-   * successful sign-in — see the timing note on PortalSession.login.
+   * Clears the breaker and starts a new login generation, so a request still in
+   * flight with the old password can't re-trip it when its 401 lands afterwards —
+   * see ntlmCircuitBreaker.ts.
    */
   onLoginSucceeded(): void {
-    resetNtlmCircuitBreaker();
+    noteNtlmLoginSucceeded();
   }
 }

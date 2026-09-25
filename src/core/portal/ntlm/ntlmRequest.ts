@@ -4,7 +4,13 @@ import { getHostQueue } from "../../http/HostQueue";
 import { loadCredentials } from "../../storage/secureStore";
 import type { PortalCredentials } from "../LoginStrategy";
 import { PortalError } from "../PortalError";
-import { isNtlmCircuitTripped, tripNtlmCircuitBreaker } from "./ntlmCircuitBreaker";
+import {
+  confirmStoredCredential,
+  currentNtlmLoginGeneration,
+  isNtlmCircuitTripped,
+  isStoredCredentialConfirmed,
+  tripNtlmCircuitBreaker,
+} from "./ntlmCircuitBreaker";
 import { getNativeNtlm } from "./nativeBinding";
 
 export interface NtlmRequest {
@@ -63,24 +69,17 @@ function storedCredentialRejected(): PortalError {
 export async function ntlmRequest(request: NtlmRequest): Promise<NtlmResponse> {
   allowedUrl(request.url);
   requireNative();
-  if (isNtlmCircuitTripped()) {
-    throw storedCredentialRejected();
-  }
-  const credentials = await loadCredentials();
-  if (!credentials) {
-    throw new PortalError("SESSION_EXPIRED", "No stored GUC credentials; please sign in.");
-  }
-  return ntlmRequestWithCredentials(credentials, request, { isStoredCredential: true });
+  // The stored credential is read inside the coordinated attempt, not before it: a
+  // call that waited out someone else's attempt (or a sign-in) must read whatever is
+  // stored when it actually runs, not a copy from before it started waiting.
+  return runStoredCredentialAttempt(undefined, async () => {
+    const credentials = await loadCredentials();
+    if (!credentials) {
+      throw new PortalError("SESSION_EXPIRED", "No stored GUC credentials; please sign in.");
+    }
+    return performNtlmRequest(credentials, request);
+  });
 }
-
-// A burst of calls at launch (schedule, grades, mail, background refresh, ...) all
-// read the same stored credential in the same tick, before any of them has heard
-// back from the server. Without coalescing, each one would independently make its
-// own real attempt against a bad credential. This tracks whichever stored-credential
-// attempt is currently in flight so a burst produces at most one real attempt: the
-// first caller runs it for real, everyone else waits for that outcome (ignoring what
-// it was) and then decides, from the breaker's state alone, whether to run its own.
-let inFlightStoredAttempt: Promise<unknown> | null = null;
 
 /**
  * Same as ntlmRequest, but with an explicit credential. Used by NtlmLoginStrategy
@@ -103,23 +102,53 @@ export async function ntlmRequestWithCredentials(
   if (!options?.isStoredCredential) {
     return performNtlmRequest(credentials, request);
   }
+  // The caller already read this credential, so it's only as current as this
+  // moment: stamp it now, before any waiting, so a sign-in during the wait makes
+  // its outcome stale rather than letting an old password trip the breaker.
+  return runStoredCredentialAttempt(currentNtlmLoginGeneration(), () =>
+    performNtlmRequest(credentials, request),
+  );
+}
 
+// A burst of calls at launch (schedule, grades, mail, background refresh, ...) all
+// want the same stored credential before any of them has heard back from the
+// server. Until that credential is confirmed this session, only one attempt runs at
+// a time: the rest wait, and each time the running one settles they re-check. If it
+// was rejected, the breaker is tripped and they all fail fast. If it failed for a
+// reason that says nothing about the password (a timeout, a network error), the
+// next waiter becomes the single attempt and the rest keep waiting. Once a
+// credential is confirmed, calls run concurrently as normal.
+let inFlightStoredAttempt: Promise<unknown> | null = null;
+
+async function runStoredCredentialAttempt(
+  entryStamp: number | undefined,
+  run: () => Promise<NtlmResponse>,
+): Promise<NtlmResponse> {
   if (isNtlmCircuitTripped()) {
     throw storedCredentialRejected();
   }
-  if (inFlightStoredAttempt) {
+  while (!isStoredCredentialConfirmed() && inFlightStoredAttempt) {
     await inFlightStoredAttempt.catch(() => undefined);
     if (isNtlmCircuitTripped()) {
       throw storedCredentialRejected();
     }
   }
 
-  const attempt = performNtlmRequest(credentials, request).catch((error: unknown) => {
-    if (error instanceof PortalError && error.code === "AUTH_INVALID") {
-      tripNtlmCircuitBreaker();
-    }
-    throw error;
-  });
+  // Nothing below may await before inFlightStoredAttempt is set, or two waiters
+  // woken together could both get past the loop.
+  const stamp = entryStamp ?? currentNtlmLoginGeneration();
+  const attempt = run().then(
+    (response) => {
+      confirmStoredCredential(stamp);
+      return response;
+    },
+    (error: unknown) => {
+      if (error instanceof PortalError && error.code === "AUTH_INVALID") {
+        tripNtlmCircuitBreaker(stamp);
+      }
+      throw error;
+    },
+  );
   inFlightStoredAttempt = attempt;
   const clear = () => {
     if (inFlightStoredAttempt === attempt) inFlightStoredAttempt = null;
