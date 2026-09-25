@@ -1,5 +1,6 @@
 import { DisallowedHostError } from "../../../http/client";
 import { PortalError } from "../../PortalError";
+import { isNtlmCircuitTripped, resetNtlmCircuitBreaker } from "../ntlmCircuitBreaker";
 import { getNativeNtlm, type NativeNtlmRequest, type NativeNtlmResponse } from "../nativeBinding";
 import { ntlmRequest } from "../ntlmRequest";
 
@@ -32,6 +33,9 @@ function nativeReturning(...responses: NativeNtlmResponse[]) {
 beforeEach(() => {
   jest.resetAllMocks();
   loadCredentials.mockResolvedValue({ username: "first.last", password: SECRET });
+  // The circuit breaker is real module state, not a jest mock — jest.resetAllMocks()
+  // above doesn't touch it, so it must be reset by hand between tests.
+  resetNtlmCircuitBreaker();
 });
 
 describe("ntlmRequest", () => {
@@ -119,6 +123,35 @@ describe("ntlmRequest", () => {
     expect(error).toBeInstanceOf(PortalError);
     expect(error.code).toBe("PORTAL_UNAVAILABLE");
     expect(error.message).not.toContain(SECRET);
+  });
+
+  it("trips the circuit breaker after one rejected stored credential", async () => {
+    nativeReturning({ status: 401, headers: {}, body: "" });
+    expect(isNtlmCircuitTripped()).toBe(false);
+    await ntlmRequest({ url: "https://portal.test.invalid/", method: "GET" }).catch(() => undefined);
+    expect(isNtlmCircuitTripped()).toBe(true);
+  });
+
+  it("fails fast once tripped, without reading credentials or calling native code again", async () => {
+    const request = nativeReturning(
+      { status: 401, headers: {}, body: "" },
+      { status: 200, headers: {}, body: "" },
+    );
+    await ntlmRequest({ url: "https://portal.test.invalid/", method: "GET" }).catch(() => undefined);
+    loadCredentials.mockClear();
+    request.mockClear();
+
+    await expect(ntlmRequest({ url: "https://portal.test.invalid/", method: "GET" })).rejects.toMatchObject({
+      code: "AUTH_INVALID",
+    });
+    expect(loadCredentials).not.toHaveBeenCalled();
+    expect(request).not.toHaveBeenCalled();
+  });
+
+  it("does not trip the breaker for non-auth failures", async () => {
+    nativeReturning({ status: 500, headers: {}, body: "" });
+    await ntlmRequest({ url: "https://portal.test.invalid/", method: "GET" });
+    expect(isNtlmCircuitTripped()).toBe(false);
   });
 
   it("never writes the credential to the console", async () => {

@@ -4,6 +4,7 @@ import { getHostQueue } from "../../http/HostQueue";
 import { loadCredentials } from "../../storage/secureStore";
 import type { PortalCredentials } from "../LoginStrategy";
 import { PortalError } from "../PortalError";
+import { isNtlmCircuitTripped, tripNtlmCircuitBreaker } from "./ntlmCircuitBreaker";
 import { getNativeNtlm } from "./nativeBinding";
 
 export interface NtlmRequest {
@@ -39,15 +40,28 @@ function allowedUrl(raw: string): URL {
  * - GET redirects are followed here (never natively), re-checked each hop.
  * - 401 after the handshake means the stored credential is wrong: AUTH_INVALID.
  * - Any other status is returned as-is; EWS SOAP faults arrive as 500 with a body.
+ * - A rejected stored credential trips a circuit breaker (ntlmCircuitBreaker.ts):
+ *   every further call fails fast with AUTH_INVALID, with no network/native call,
+ *   until a fresh sign-in succeeds — see docs/adr/A-001-portal-auth.md.
  */
 export async function ntlmRequest(request: NtlmRequest): Promise<NtlmResponse> {
   allowedUrl(request.url);
   requireNative();
+  if (isNtlmCircuitTripped()) {
+    throw new PortalError("AUTH_INVALID", "GUC rejected the stored username or password; sign in again.");
+  }
   const credentials = await loadCredentials();
   if (!credentials) {
     throw new PortalError("SESSION_EXPIRED", "No stored GUC credentials; please sign in.");
   }
-  return ntlmRequestWithCredentials(credentials, request);
+  try {
+    return await ntlmRequestWithCredentials(credentials, request);
+  } catch (error) {
+    if (error instanceof PortalError && error.code === "AUTH_INVALID") {
+      tripNtlmCircuitBreaker();
+    }
+    throw error;
+  }
 }
 
 function requireNative() {

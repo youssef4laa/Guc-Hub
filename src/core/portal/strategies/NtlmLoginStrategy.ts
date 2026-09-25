@@ -1,5 +1,6 @@
 import { DisallowedHostError } from "../../http/client";
 import type { LoginResult, LoginStrategy, PortalCookieJar, PortalCredentials } from "../LoginStrategy";
+import { resetNtlmCircuitBreaker } from "../ntlm/ntlmCircuitBreaker";
 import { getNativeNtlm } from "../ntlm/nativeBinding";
 import { ntlmRequestWithCredentials, type NtlmRequest, type NtlmResponse } from "../ntlm/ntlmRequest";
 import { PortalError } from "../PortalError";
@@ -64,6 +65,7 @@ export class NtlmLoginStrategy implements LoginStrategy {
     }
 
     if (response.status >= 200 && response.status < 300) {
+      resetNtlmCircuitBreaker();
       return { cookieJar: new NtlmSessionMarker() };
     }
     throw new PortalError("PORTAL_UNAVAILABLE", `Portal answered ${response.status} after sign-in.`, {

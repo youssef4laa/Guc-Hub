@@ -1,4 +1,9 @@
 import { DisallowedHostError } from "../../../http/client";
+import {
+  isNtlmCircuitTripped,
+  resetNtlmCircuitBreaker,
+  tripNtlmCircuitBreaker,
+} from "../../ntlm/ntlmCircuitBreaker";
 import { getNativeNtlm } from "../../ntlm/nativeBinding";
 import { PortalError } from "../../PortalError";
 import { NtlmLoginStrategy } from "../NtlmLoginStrategy";
@@ -11,6 +16,10 @@ const creds = { username: "first.last", password: "not-real" };
 function strategyReturning(impl: jest.Mock) {
   return new NtlmLoginStrategy(() => URL, impl);
 }
+
+beforeEach(() => {
+  resetNtlmCircuitBreaker();
+});
 
 describe("NtlmLoginStrategy", () => {
   it("signs in when the authenticated GET of the portal root succeeds", async () => {
@@ -56,5 +65,19 @@ describe("NtlmLoginStrategy", () => {
 
     (getNativeNtlm as jest.Mock).mockReturnValue(null);
     await expect(new NtlmLoginStrategy(() => URL, jest.fn()).logout()).resolves.toBeUndefined();
+  });
+
+  it("resets the ntlm circuit breaker once a fresh sign-in succeeds", async () => {
+    tripNtlmCircuitBreaker();
+    const request = jest.fn().mockResolvedValue({ status: 200, headers: {}, body: "<html/>" });
+    await strategyReturning(request).login(creds);
+    expect(isNtlmCircuitTripped()).toBe(false);
+  });
+
+  it("leaves the circuit breaker tripped when the fresh sign-in also fails", async () => {
+    tripNtlmCircuitBreaker();
+    const request = jest.fn().mockRejectedValue(new PortalError("AUTH_INVALID", "rejected"));
+    await expect(strategyReturning(request).login(creds)).rejects.toMatchObject({ code: "AUTH_INVALID" });
+    expect(isNtlmCircuitTripped()).toBe(true);
   });
 });
