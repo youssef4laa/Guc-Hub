@@ -2,6 +2,7 @@ import { DisallowedHostError } from "../../http/client";
 import { HTTP_ALLOWLIST, HTTP_CONFIG } from "../../http/config";
 import { getHostQueue } from "../../http/HostQueue";
 import { loadCredentials } from "../../storage/secureStore";
+import type { PortalCredentials } from "../LoginStrategy";
 import { PortalError } from "../PortalError";
 import { getNativeNtlm } from "./nativeBinding";
 
@@ -40,8 +41,16 @@ function allowedUrl(raw: string): URL {
  * - Any other status is returned as-is; EWS SOAP faults arrive as 500 with a body.
  */
 export async function ntlmRequest(request: NtlmRequest): Promise<NtlmResponse> {
-  let url = allowedUrl(request.url);
+  allowedUrl(request.url);
+  requireNative();
+  const credentials = await loadCredentials();
+  if (!credentials) {
+    throw new PortalError("SESSION_EXPIRED", "No stored GUC credentials; please sign in.");
+  }
+  return ntlmRequestWithCredentials(credentials, request);
+}
 
+function requireNative() {
   const native = getNativeNtlm();
   if (!native) {
     throw new PortalError(
@@ -49,11 +58,20 @@ export async function ntlmRequest(request: NtlmRequest): Promise<NtlmResponse> {
       "This build doesn't include the NTLM transport yet (modules/guc-ntlm). Install a newer dev client.",
     );
   }
+  return native;
+}
 
-  const credentials = await loadCredentials();
-  if (!credentials) {
-    throw new PortalError("SESSION_EXPIRED", "No stored GUC credentials; please sign in.");
-  }
+/**
+ * Same as ntlmRequest, but with an explicit credential. Only core/portal uses this
+ * (NtlmLoginStrategy tries a credential before it is stored); it is deliberately
+ * not exported from ./index, so features can't pass passwords around.
+ */
+export async function ntlmRequestWithCredentials(
+  credentials: PortalCredentials,
+  request: NtlmRequest,
+): Promise<NtlmResponse> {
+  let url = allowedUrl(request.url);
+  const native = requireNative();
 
   for (let hop = 0; hop <= MAX_REDIRECTS; hop++) {
     const queue = getHostQueue(

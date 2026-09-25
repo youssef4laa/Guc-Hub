@@ -26,6 +26,8 @@ export interface GucNtlmNativeModule {
    * on every hop), must NOT offer Negotiate/Kerberos, and must NOT relax TLS.
    */
   request(request: NativeNtlmRequest): Promise<NativeNtlmResponse>;
+  /** Drops in-memory cookies and pooled (already-authenticated) connections. Called on sign-out. */
+  clearSession(): void;
 }
 
 /** null until a dev client that includes modules/guc-ntlm is installed. */

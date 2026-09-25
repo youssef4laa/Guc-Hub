@@ -31,6 +31,7 @@ export class PortalSession {
 
   async logout(): Promise<void> {
     this.cookieJar = null;
+    await this.strategy.logout?.();
     await deleteCredentials();
   }
 
