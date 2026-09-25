@@ -24,10 +24,12 @@ const { AndroidConfig, withAndroidManifest, withDangerousMod } = require("expo/c
 // ---------------------------------------------------------------------------
 
 const TRUST_ANCHOR_HOST = "student.guc.edu.eg";
+// .crt, not .pem: the repo's .gitignore ignores *.pem (a guard against committing
+// private keys), which silently dropped this public certificate from the commit.
 const CERT_SOURCE = path.join(
   __dirname,
   "..",
-  "src/core/portal/certs/sectigo-public-server-authentication-ca-dv-r36.pem",
+  "src/core/portal/certs/sectigo-public-server-authentication-ca-dv-r36.crt",
 );
 // SHA-256 of the certificate's DER bytes. Verified against Sectigo's published
 // file and against the chain mail.guc.edu.eg serves (see ADR A-001). The build
