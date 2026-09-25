@@ -1,0 +1,16 @@
+guc-ntlm
+Copyright 2026 the Guc Hub contributors.
+
+This module vendors three files from Apache HttpClient 4.5.14
+(android/src/main/java/expo/modules/gucntlm/ntlm/NTLMEngine*.java), which carry
+this notice:
+
+  Apache HttpClient
+  Copyright 1999-2022 The Apache Software Foundation
+
+  This product includes software developed at
+  The Apache Software Foundation (http://www.apache.org/).
+
+Those files are licensed under the Apache License, Version 2.0; see
+LICENSE-APACHE-2.0 in this directory. Local changes are listed at the top of
+each vendored file.
