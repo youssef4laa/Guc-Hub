@@ -21,9 +21,22 @@ export interface LoginResult {
 
 export interface LoginStrategy {
   readonly id: string;
-  login(credentials: PortalCredentials): Promise<LoginResult>;
+  /**
+   * `isStoredCredential` marks a silent retry of an already-stored credential
+   * (biometric unlock, PortalSession.withFreshSession) rather than one the user just
+   * typed. A strategy that rate-limits repeated auth failures (see NTLM's circuit
+   * breaker) keys off this, not off which caller invoked it — the same credential
+   * can reach `login` from either place.
+   */
+  login(credentials: PortalCredentials, options?: { isStoredCredential?: boolean }): Promise<LoginResult>;
   /** True if the jar this strategy produced is still usable for a lightweight probe request. */
   isSessionValid(cookieJar: PortalCookieJar): Promise<boolean>;
   /** Drop any strategy-held session state (e.g. authenticated native connections). */
   logout?(): Promise<void>;
+  /**
+   * Called once the session has fully committed a successful login (after any
+   * credential persistence), so a strategy can clear failure state it knows is now
+   * stale without racing the persistence itself.
+   */
+  onLoginSucceeded?(): void;
 }

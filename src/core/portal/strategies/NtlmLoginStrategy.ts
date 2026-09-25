@@ -5,7 +5,11 @@ import { getNativeNtlm } from "../ntlm/nativeBinding";
 import { ntlmRequestWithCredentials, type NtlmRequest, type NtlmResponse } from "../ntlm/ntlmRequest";
 import { PortalError } from "../PortalError";
 
-type RequestWithCredentials = (credentials: PortalCredentials, request: NtlmRequest) => Promise<NtlmResponse>;
+type RequestWithCredentials = (
+  credentials: PortalCredentials,
+  request: NtlmRequest,
+  options?: { isStoredCredential?: boolean },
+) => Promise<NtlmResponse>;
 
 /**
  * NTLM holds no JS-side session: the native transport authenticates each
@@ -44,7 +48,10 @@ export class NtlmLoginStrategy implements LoginStrategy {
     private readonly request: RequestWithCredentials = ntlmRequestWithCredentials,
   ) {}
 
-  async login(credentials: PortalCredentials): Promise<LoginResult> {
+  async login(
+    credentials: PortalCredentials,
+    options?: { isStoredCredential?: boolean },
+  ): Promise<LoginResult> {
     if (!credentials.username || !credentials.password) {
       throw new PortalError("AUTH_INVALID", "Username and password are required.");
     }
@@ -52,7 +59,7 @@ export class NtlmLoginStrategy implements LoginStrategy {
     const url = this.portalUrl();
     let response: NtlmResponse;
     try {
-      response = await this.request(credentials, { url, method: "GET" });
+      response = await this.request(credentials, { url, method: "GET" }, options);
     } catch (error) {
       if (error instanceof DisallowedHostError) {
         throw new PortalError(
@@ -65,7 +72,6 @@ export class NtlmLoginStrategy implements LoginStrategy {
     }
 
     if (response.status >= 200 && response.status < 300) {
-      resetNtlmCircuitBreaker();
       return { cookieJar: new NtlmSessionMarker() };
     }
     throw new PortalError("PORTAL_UNAVAILABLE", `Portal answered ${response.status} after sign-in.`, {
@@ -80,5 +86,15 @@ export class NtlmLoginStrategy implements LoginStrategy {
 
   async logout(): Promise<void> {
     getNativeNtlm()?.clearSession();
+  }
+
+  /**
+   * Called by PortalSession once a successful login's credential is fully persisted.
+   * A stale in-flight read of the old stored credential can still trip the breaker
+   * in the meantime; clearing it here, last, means that trip doesn't outlive this
+   * successful sign-in — see the timing note on PortalSession.login.
+   */
+  onLoginSucceeded(): void {
+    resetNtlmCircuitBreaker();
   }
 }

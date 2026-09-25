@@ -1,6 +1,6 @@
 import { DisallowedHostError } from "../../../http/client";
 import { PortalError } from "../../PortalError";
-import { isNtlmCircuitTripped, resetNtlmCircuitBreaker } from "../ntlmCircuitBreaker";
+import { isNtlmCircuitTripped, resetNtlmCircuitBreaker, tripNtlmCircuitBreaker } from "../ntlmCircuitBreaker";
 import { getNativeNtlm, type NativeNtlmRequest, type NativeNtlmResponse } from "../nativeBinding";
 import { ntlmRequest } from "../ntlmRequest";
 
@@ -154,6 +154,45 @@ describe("ntlmRequest", () => {
     expect(isNtlmCircuitTripped()).toBe(false);
   });
 
+  it("coalesces a burst of concurrent calls into a single real attempt against a bad credential", async () => {
+    // A launch where every feature fires at once, all reading the same (bad) stored
+    // credential before any of them has heard back from the server.
+    let resolveNative: (r: NativeNtlmResponse) => void = () => undefined;
+    const nativeResponse = new Promise<NativeNtlmResponse>((resolve) => {
+      resolveNative = resolve;
+    });
+    const request = jest.fn().mockReturnValue(nativeResponse);
+    mockedGetNative.mockReturnValue({ request });
+
+    const calls = Array.from({ length: 5 }, () =>
+      ntlmRequest({ url: "https://portal.test.invalid/", method: "GET" }).catch((e: unknown) => e),
+    );
+
+    // Let every call reach (and start waiting on) the in-flight attempt before
+    // the server actually answers.
+    for (let i = 0; i < 5; i++) await Promise.resolve();
+    expect(request).toHaveBeenCalledTimes(1);
+
+    resolveNative({ status: 401, headers: {}, body: "" });
+    const results = await Promise.all(calls);
+
+    expect(request).toHaveBeenCalledTimes(1);
+    expect(isNtlmCircuitTripped()).toBe(true);
+    for (const result of results) {
+      expect(result).toMatchObject({ code: "AUTH_INVALID" });
+    }
+  });
+
+  it("does not coalesce once the in-flight attempt has settled", async () => {
+    nativeReturning(
+      { status: 200, headers: {}, body: "first" },
+      { status: 200, headers: {}, body: "second" },
+    );
+    await ntlmRequest({ url: "https://portal.test.invalid/", method: "GET" });
+    const res = await ntlmRequest({ url: "https://portal.test.invalid/", method: "GET" });
+    expect(res.body).toBe("second");
+  });
+
   it("never writes the credential to the console", async () => {
     const spies = (["log", "info", "warn", "error"] as const).map((m) =>
       jest.spyOn(console, m).mockImplementation(() => undefined),
@@ -185,5 +224,39 @@ describe("ntlmRequestWithCredentials", () => {
   it("is not exported from the public ntlm index", () => {
     // eslint-disable-next-line @typescript-eslint/no-require-imports
     expect(Object.keys(require("../index"))).toEqual(["ntlmRequest"]);
+  });
+
+  it("bypasses the circuit breaker for a freshly typed credential, even while tripped", async () => {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const { ntlmRequestWithCredentials } = require("../ntlmRequest");
+    tripNtlmCircuitBreaker();
+    const request = nativeReturning({ status: 200, headers: {}, body: "ok" });
+    const res = await ntlmRequestWithCredentials(
+      { username: "try.me", password: "candidate" },
+      { url: "https://portal.test.invalid/", method: "GET" },
+    );
+    expect(res.body).toBe("ok");
+    expect(request).toHaveBeenCalledTimes(1);
+  });
+
+  it("is subject to the same breaker as ntlmRequest when isStoredCredential is true", async () => {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const { ntlmRequestWithCredentials } = require("../ntlmRequest");
+    nativeReturning({ status: 401, headers: {}, body: "" });
+    const stored = { username: "first.last", password: SECRET };
+    await ntlmRequestWithCredentials(
+      stored,
+      { url: "https://portal.test.invalid/", method: "GET" },
+      { isStoredCredential: true },
+    ).catch(() => undefined);
+    expect(isNtlmCircuitTripped()).toBe(true);
+
+    await expect(
+      ntlmRequestWithCredentials(
+        stored,
+        { url: "https://portal.test.invalid/", method: "GET" },
+        { isStoredCredential: true },
+      ),
+    ).rejects.toMatchObject({ code: "AUTH_INVALID" });
   });
 });
