@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Runs Apache HttpClient 4.5.14's own NTLM known-answer tests (TestNTLMEngineImpl,
+# Runs our facade test (from outside the engine's package) plus Apache HttpClient
+# 4.5.14's own NTLM known-answer tests (TestNTLMEngineImpl,
 # from the rel/v4.5.14 tag, package-renamed) against the vendored engine on the
 # JVM. Proves the vendoring changes didn't break the crypto. It does NOT prove
 # Android's crypto providers offer DES/RC4 — that needs a device/emulator run.
@@ -13,4 +14,4 @@ curl -sSf -o "$WORK/hamcrest.jar" "$C/org/hamcrest/hamcrest-core/1.3/hamcrest-co
 find "$HERE/src" "$HERE/../src/main/java/expo/modules/gucntlm/ntlm" -name '*.java' -print0 |
   xargs -0 javac -d "$WORK/out" -cp "$WORK/junit.jar"
 java -cp "$WORK/out:$WORK/junit.jar:$WORK/hamcrest.jar" org.junit.runner.JUnitCore \
-  expo.modules.gucntlm.ntlm.TestNTLMEngineImpl
+  expo.modules.gucntlm.ntlm.TestNTLMEngineImpl com.guchub.ntlmcheck.NtlmMessagesFacadeTest

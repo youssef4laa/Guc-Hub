@@ -1,6 +1,6 @@
 package expo.modules.gucntlm
 
-import expo.modules.gucntlm.ntlm.NTLMEngineImpl
+import expo.modules.gucntlm.ntlm.NtlmMessages
 import okhttp3.Authenticator
 import okhttp3.Request
 import okhttp3.Response
@@ -16,8 +16,6 @@ internal class NtlmAuthenticator(
   private val username: String,
   private val password: String,
 ) : Authenticator {
-  private val engine = NTLMEngineImpl()
-
   override fun authenticate(route: Route?, response: Response): Request? {
     val ntlmChallenge = response.headers("WWW-Authenticate")
       .map { it.trim() }
@@ -30,12 +28,12 @@ internal class NtlmAuthenticator(
     val header = if (ntlmChallenge.equals("NTLM", ignoreCase = true)) {
       // A bare challenge after we already answered means the credential was refused.
       if (previous != null) return null
-      "NTLM " + engine.generateType1Msg(null, null)
+      "NTLM " + NtlmMessages.type1()
     } else {
       // "NTLM <Type 2>": only valid right after our own Type 1.
       if (previous == null || !previous.startsWith("NTLM ", ignoreCase = true)) return null
       val type2 = ntlmChallenge.substring("NTLM ".length).trim()
-      "NTLM " + engine.generateType3Msg(user, password, domain, null, type2)
+      "NTLM " + NtlmMessages.type3(user, password, domain, type2)
     }
 
     return response.request.newBuilder().header("Authorization", header).build()
