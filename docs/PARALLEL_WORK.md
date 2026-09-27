@@ -30,7 +30,9 @@ or later, causing merge conflicts or silent stomping:
 ## Ownership matrix
 
 Also encoded in `.github/scope.json` (machine-readable, read by the CI scope
-guard) and `.github/CODEOWNERS` (GitHub-enforced review requirement).
+guard) and `.github/CODEOWNERS` (picks who GitHub auto-requests as a
+reviewer — main's branch protection requires one approval from anyone, not
+specifically a code owner; see "Human actions" below for why).
 
 ### Track A — Portal (branch prefix `portal/`)
 
@@ -40,7 +42,7 @@ Owner: `@youssef4laa`.
 - Their route files under `app/(tabs)/{schedule,grades,transcript,cms,exams,attendance,staff,evaluations}.tsx`
 - `fixtures/{schedule,grades,transcript,cms,exams,attendance,staff,evaluations}/**`
 - `src/core/portal/**`
-- `src/core/portal/ntlm/**` — the NTLM transport (ADR A-001). Track A edits, Track B also reviews (required, not just invited), since mail's EWS provider depends on it and this is also where an author-can't-approve-their-own-PR bind would otherwise block every solo Track A change here
+- `src/core/portal/ntlm/**` — the NTLM transport (ADR A-001). Track A edits; Track B is listed as a code owner too (GitHub auto-requests Mo's review) since mail's EWS provider depends on it — not enforced as a hard requirement (see "Human actions" below), just the accurate reviewer to route to
 - `modules/guc-ntlm/**` — the NTLM native module (ADR A-001). Track A edits, Track B reviews, since mail's EWS provider depends on it
 - `src/core/http/**` — Track A edits, Track B reviews (it's shared infrastructure, but Track A is currently the one driving its real implementation via Spike 1/3)
 - `config/plugins.portal.js`
@@ -151,8 +153,9 @@ discipline as `core/http` internally, and be tested the same way
       review from code owners" — with a two-person team and GitHub already
       refusing to let a PR's author approve their own PR, "1 approval" is
       already "the other person reviewed it," without needing every
-      CODEOWNERS line to list both of us (see #13/#17's threads for why
-      the code-owner-enforced version deadlocks on solo-track PRs).
+      CODEOWNERS line to list both of us. (Reasoning discussed directly
+      between the two of us, not on GitHub — #13 briefly hit the
+      code-owner-enforced version's deadlock, which is what prompted this.)
       CODEOWNERS still auto-requests the right reviewer either way.
 - [ ] Create labels `needs-track-a`, `needs-track-b`, `cross-track`.
 - [ ] Add CI secrets if/when wanted: `EXPO_TOKEN` (EAS builds),
