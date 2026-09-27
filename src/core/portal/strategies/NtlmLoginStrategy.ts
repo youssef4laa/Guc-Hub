@@ -1,10 +1,15 @@
 import { DisallowedHostError } from "../../http/client";
 import type { LoginResult, LoginStrategy, PortalCookieJar, PortalCredentials } from "../LoginStrategy";
+import { noteNtlmLoginSucceeded, noteNtlmSignedOut } from "../ntlm/ntlmCircuitBreaker";
 import { getNativeNtlm } from "../ntlm/nativeBinding";
 import { ntlmRequestWithCredentials, type NtlmRequest, type NtlmResponse } from "../ntlm/ntlmRequest";
 import { PortalError } from "../PortalError";
 
-type RequestWithCredentials = (credentials: PortalCredentials, request: NtlmRequest) => Promise<NtlmResponse>;
+type RequestWithCredentials = (
+  credentials: PortalCredentials,
+  request: NtlmRequest,
+  options?: { isStoredCredential?: boolean },
+) => Promise<NtlmResponse>;
 
 /**
  * NTLM holds no JS-side session: the native transport authenticates each
@@ -43,7 +48,10 @@ export class NtlmLoginStrategy implements LoginStrategy {
     private readonly request: RequestWithCredentials = ntlmRequestWithCredentials,
   ) {}
 
-  async login(credentials: PortalCredentials): Promise<LoginResult> {
+  async login(
+    credentials: PortalCredentials,
+    options?: { isStoredCredential?: boolean },
+  ): Promise<LoginResult> {
     if (!credentials.username || !credentials.password) {
       throw new PortalError("AUTH_INVALID", "Username and password are required.");
     }
@@ -51,7 +59,7 @@ export class NtlmLoginStrategy implements LoginStrategy {
     const url = this.portalUrl();
     let response: NtlmResponse;
     try {
-      response = await this.request(credentials, { url, method: "GET" });
+      response = await this.request(credentials, { url, method: "GET" }, options);
     } catch (error) {
       if (error instanceof DisallowedHostError) {
         throw new PortalError(
@@ -78,5 +86,16 @@ export class NtlmLoginStrategy implements LoginStrategy {
 
   async logout(): Promise<void> {
     getNativeNtlm()?.clearSession();
+    noteNtlmSignedOut();
+  }
+
+  /**
+   * Called by PortalSession once a successful login's credential is fully persisted.
+   * Clears the breaker and starts a new login generation, so a request still in
+   * flight with the old password can't re-trip it when its 401 lands afterwards —
+   * see ntlmCircuitBreaker.ts.
+   */
+  onLoginSucceeded(): void {
+    noteNtlmLoginSucceeded();
   }
 }

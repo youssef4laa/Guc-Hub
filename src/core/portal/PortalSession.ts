@@ -21,11 +21,17 @@ export class PortalSession {
   }
 
   async login(credentials: PortalCredentials, options?: { persist?: boolean }): Promise<void> {
-    const result = await this.strategy.login(credentials);
+    const isStoredCredential = options?.persist === false;
+    const result = await this.strategy.login(credentials, { isStoredCredential });
     this.cookieJar = result.cookieJar;
-    if (options?.persist !== false) {
+    if (!isStoredCredential) {
       await saveCredentials(credentials);
     }
+    // Called last, after persistence: a strategy's failure state (e.g. NTLM's
+    // circuit breaker) must clear only once the new credential is the one a
+    // concurrent caller would actually read back, or a stale in-flight read of the
+    // old credential could re-trip it right after this succeeded.
+    this.strategy.onLoginSucceeded?.();
     log.info("login succeeded", { strategy: this.strategy.id });
   }
 
