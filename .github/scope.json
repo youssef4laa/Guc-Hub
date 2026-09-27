@@ -43,7 +43,7 @@
     },
     "mail": {
       "branchPrefixes": ["mail/", "exp/"],
-      "owner": "@FRIEND_HANDLE",
+      "owner": "@mokhalifa9",
       "allow": [
         "src/features/mail/**",
         "src/features/flappy/**",

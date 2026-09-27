@@ -50,7 +50,7 @@ Owner: `@youssef4laa`.
 
 ### Track B — Mail & Experience (branch prefixes `mail/`, `exp/`)
 
-Owner: `@FRIEND_HANDLE` (placeholder — see "Human actions" below).
+Owner: `@mokhalifa9`.
 
 - `src/features/{mail,flappy,settings}/**`
 - Their route files under `app/(tabs)/{mail,flappy,settings}.tsx`, plus `app/(tabs)/more.tsx`
@@ -143,11 +143,17 @@ discipline as `core/http` internally, and be tested the same way
 
 ## Human actions (GitHub, not code)
 
-- [ ] Fill in `@FRIEND_HANDLE` in `.github/CODEOWNERS` and `.github/scope.json`
-      with the real GitHub handle.
-- [ ] Add that person as a repo collaborator.
-- [ ] Protect `main`: require a PR, require CI to pass, require CODEOWNERS
-      review, disallow force pushes.
+- [x] Fill in `@FRIEND_HANDLE` in `.github/CODEOWNERS` and `.github/scope.json`
+      with the real GitHub handle (`@mokhalifa9`).
+- [x] Add that person as a repo collaborator.
+- [x] Protect `main`: require a PR, require CI to pass, disallow force
+      pushes and deletions, 1 required approving review. **Not** "require
+      review from code owners" — with a two-person team and GitHub already
+      refusing to let a PR's author approve their own PR, "1 approval" is
+      already "the other person reviewed it," without needing every
+      CODEOWNERS line to list both of us (see #13/#17's threads for why
+      the code-owner-enforced version deadlocks on solo-track PRs).
+      CODEOWNERS still auto-requests the right reviewer either way.
 - [ ] Create labels `needs-track-a`, `needs-track-b`, `cross-track`.
 - [ ] Add CI secrets if/when wanted: `EXPO_TOKEN` (EAS builds),
       `MAESTRO_CLOUD_API_KEY` (Maestro Cloud smoke run) — both jobs skip
