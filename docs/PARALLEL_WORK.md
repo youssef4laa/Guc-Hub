@@ -40,6 +40,7 @@ Owner: `@youssef4laa`.
 - Their route files under `app/(tabs)/{schedule,grades,transcript,cms,exams,attendance,staff,evaluations}.tsx`
 - `fixtures/{schedule,grades,transcript,cms,exams,attendance,staff,evaluations}/**`
 - `src/core/portal/**`
+- `src/core/portal/ntlm/**` — the NTLM transport (ADR A-001). Track A edits, Track B also reviews (required, not just invited), since mail's EWS provider depends on it and this is also where an author-can't-approve-their-own-PR bind would otherwise block every solo Track A change here
 - `modules/guc-ntlm/**` — the NTLM native module (ADR A-001). Track A edits, Track B reviews, since mail's EWS provider depends on it
 - `src/core/http/**` — Track A edits, Track B reviews (it's shared infrastructure, but Track A is currently the one driving its real implementation via Spike 1/3)
 - `config/plugins.portal.js`
