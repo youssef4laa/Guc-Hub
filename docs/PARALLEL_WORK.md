@@ -30,7 +30,9 @@ or later, causing merge conflicts or silent stomping:
 ## Ownership matrix
 
 Also encoded in `.github/scope.json` (machine-readable, read by the CI scope
-guard) and `.github/CODEOWNERS` (GitHub-enforced review requirement).
+guard) and `.github/CODEOWNERS` (picks who GitHub auto-requests as a
+reviewer — main's branch protection requires one approval from anyone, not
+specifically a code owner; see "Human actions" below for why).
 
 ### Track A — Portal (branch prefix `portal/`)
 
@@ -40,7 +42,7 @@ Owner: `@youssef4laa`.
 - Their route files under `app/(tabs)/{schedule,grades,transcript,cms,exams,attendance,staff,evaluations}.tsx`
 - `fixtures/{schedule,grades,transcript,cms,exams,attendance,staff,evaluations}/**`
 - `src/core/portal/**`
-- `src/core/portal/ntlm/**` — the NTLM transport (ADR A-001). Track A edits, Track B also reviews (required, not just invited), since mail's EWS provider depends on it and this is also where an author-can't-approve-their-own-PR bind would otherwise block every solo Track A change here
+- `src/core/portal/ntlm/**` — the NTLM transport (ADR A-001). Track A edits; Track B is listed as a code owner too (GitHub auto-requests Mo's review) since mail's EWS provider depends on it — not enforced as a hard requirement (see "Human actions" below), just the accurate reviewer to route to
 - `modules/guc-ntlm/**` — the NTLM native module (ADR A-001). Track A edits, Track B reviews, since mail's EWS provider depends on it
 - `src/core/http/**` — Track A edits, Track B reviews (it's shared infrastructure, but Track A is currently the one driving its real implementation via Spike 1/3)
 - `config/plugins.portal.js`
@@ -50,7 +52,7 @@ Owner: `@youssef4laa`.
 
 ### Track B — Mail & Experience (branch prefixes `mail/`, `exp/`)
 
-Owner: `@FRIEND_HANDLE` (placeholder — see "Human actions" below).
+Owner: `@mokhalifa9`.
 
 - `src/features/{mail,flappy,settings}/**`
 - Their route files under `app/(tabs)/{mail,flappy,settings}.tsx`, plus `app/(tabs)/more.tsx`
@@ -143,11 +145,18 @@ discipline as `core/http` internally, and be tested the same way
 
 ## Human actions (GitHub, not code)
 
-- [ ] Fill in `@FRIEND_HANDLE` in `.github/CODEOWNERS` and `.github/scope.json`
-      with the real GitHub handle.
-- [ ] Add that person as a repo collaborator.
-- [ ] Protect `main`: require a PR, require CI to pass, require CODEOWNERS
-      review, disallow force pushes.
+- [x] Fill in `@FRIEND_HANDLE` in `.github/CODEOWNERS` and `.github/scope.json`
+      with the real GitHub handle (`@mokhalifa9`).
+- [x] Add that person as a repo collaborator.
+- [x] Protect `main`: require a PR, require CI to pass, disallow force
+      pushes and deletions, 1 required approving review. **Not** "require
+      review from code owners" — with a two-person team and GitHub already
+      refusing to let a PR's author approve their own PR, "1 approval" is
+      already "the other person reviewed it," without needing every
+      CODEOWNERS line to list both of us. (Reasoning discussed directly
+      between the two of us, not on GitHub — #13 briefly hit the
+      code-owner-enforced version's deadlock, which is what prompted this.)
+      CODEOWNERS still auto-requests the right reviewer either way.
 - [ ] Create labels `needs-track-a`, `needs-track-b`, `cross-track`.
 - [ ] Add CI secrets if/when wanted: `EXPO_TOKEN` (EAS builds),
       `MAESTRO_CLOUD_API_KEY` (Maestro Cloud smoke run) — both jobs skip

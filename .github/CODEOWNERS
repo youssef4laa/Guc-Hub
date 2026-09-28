@@ -1,6 +1,8 @@
 # See docs/PARALLEL_WORK.md for the full ownership rationale, and
 # .github/scope.json for the machine-readable version the CI scope guard reads.
-# Replace @mokhalifa9 with the real GitHub handle before the first real PR.
+# This file picks who GitHub auto-requests as a reviewer; it isn't a hard merge
+# requirement (main's branch protection asks for 1 approval from anyone, not
+# specifically a code owner — see PARALLEL_WORK.md's "Human actions" section).
 
 # Track A: Portal
 /src/features/schedule/       @youssef4laa
