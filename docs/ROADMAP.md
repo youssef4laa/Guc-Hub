@@ -1,5 +1,10 @@
 # Roadmap
 
+> **Status: wrapped up.** GUC released its own official app, so this project is
+> being finished as a demo-mode portfolio piece. Everything ships on mock data;
+> the live-portal rows below are documented, not scheduled. See the README for
+> what is real vs. mocked.
+
 Per-track detail lives in its own file so both tracks can edit their own roadmap
 without touching a shared one: [roadmap/track-a.md](roadmap/track-a.md) (Portal),
 [roadmap/track-b.md](roadmap/track-b.md) (Mail & Experience). This file holds

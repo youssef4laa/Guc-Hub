@@ -5,13 +5,10 @@ makes that work without a PM refereeing every PR.
 
 ## Tracks
 
-| Track                    | Owner    | Owns                                                                                                                            |
-| ------------------------ | -------- | ------------------------------------------------------------------------------------------------------------------------------- |
-| **A: Portal**            | `@dev-a` | `schedule`, `grades`, `transcript`, `cms`, `exams`, `attendance`, `staff`, `evaluations`; the login strategies in `core/portal` |
-| **B: Mail & Experience** | `@dev-b` | `mail`, `flappy`, `settings`; `core/ui`, `core/notifications`, theming, widgets, offline                                        |
-
-Replace the `@dev-a` / `@dev-b` placeholders in `.github/CODEOWNERS` with real
-GitHub handles before opening the first real PR.
+| Track                    | Owner          | Owns                                                                                                                            |
+| ------------------------ | -------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| **A: Portal**            | `@youssef4laa` | `schedule`, `grades`, `transcript`, `cms`, `exams`, `attendance`, `staff`, `evaluations`; the login strategies in `core/portal` |
+| **B: Mail & Experience** | `@mokhalifa9`  | `mail`, `flappy`, `settings`; `core/ui`, `core/notifications`, theming, widgets, offline                                        |
 
 **Shared** (needs review from both): `core/http`, `core/storage`, `core/query`,
 `app/_layout.tsx` and other root `app/` files, root configs (`package.json`,
