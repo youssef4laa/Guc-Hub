@@ -10,15 +10,53 @@ Android from one codebase.
 > GUC's real servers**, and it is **not affiliated with GUC**. Do not enter real
 > GUC credentials into a build of this app.
 
-There is **no Guc Hub backend**. The app runs entirely on your phone and talks
-directly to GUC's own servers with your own GUC credentials, which never leave your
+By design there is **no Guc Hub backend**: the app runs entirely on the phone and would talk
+directly to GUC's own servers with the student's own credentials, which never leave the
 device except to GUC's own hosts. See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
-This repository currently holds the **foundation**: core infrastructure, one fully
-working reference feature (`auth` + `schedule`, in demo mode), and stubs for every
-other planned feature. See [docs/ROADMAP.md](docs/ROADMAP.md) for what's real vs.
-stubbed, and [docs/DISCOVERY.md](docs/DISCOVERY.md) for what's still unknown about
-GUC's portals.
+## What is real and what is mocked
+
+| Area                                                                                                  | State                                                                                                          |
+| ----------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| Auth: login, secure credential storage, silent re-login, biometric unlock, demo mode                  | Built. Only the mock strategy has been exercised end to end                                                    |
+| Schedule, Grades, CMS, Exams, Attendance, Staff, Transcript, Evaluations                              | Built on demo data, with unit tests. No live source or parser (nothing was ever captured from the real portal) |
+| Settings (theme, sign out, unofficial notice)                                                         | Built                                                                                                          |
+| Glide (on-device tap-to-flap game, local best score)                                                  | Built                                                                                                          |
+| Mail (list, read, search, compose, attachments, swipe-delete, safe HTML)                              | Code-complete on demo data with ~170 logic tests, but **disabled**: it has never been driven on a device       |
+| Real NTLM login (`modules/guc-ntlm`, iOS `URLSession` and Android OkHttp) and an Android trust anchor | Written and unit-tested. Never verified against GUC's real servers                                             |
+| Push notifications, leaderboard backend, home-screen widgets                                          | Not built. See [docs/ROADMAP.md](docs/ROADMAP.md)                                                              |
+
+<!-- SCREENSHOTS: add a light/dark gallery here once docs/screenshots/ exists
+     (capture brief: docs/DEVICE_CAPTURE.md). -->
+
+## Engineering highlights
+
+- **No backend by design.** The phone talks directly to the university's own hosts
+  and credentials never leave the device ([ADR S-002](docs/adr/S-002-credentials-and-session.md)).
+- **Feature-folder architecture with codegen.** Each feature is a manifest, zod
+  schema, source (mock or live), store and screens. `tools/gen-registry.js`
+  generates the tab bar, More menu, i18n bundle, allowed-host list and SQLite
+  migrations, and an ESLint boundaries rule stops features importing each other.
+- **Typed portal errors** (`PortalError`) drive one uniform error UI, including an
+  "Open original page" fallback when a parser breaks.
+- **Security-minded plumbing:** credential redaction in logs, an https-only host
+  allowlist, and a mail HTML/CSS sanitizer and navigation policy tested against a
+  hostile fixture.
+- **A native NTLM module** for iOS and Android, plus a documented investigation of
+  how the portal authenticates ([ADR A-001](docs/adr/A-001-portal-auth.md)).
+- **Conflict-proofed two-person workflow:** track ownership, CODEOWNERS, a CI scope
+  guard and a rehearsal script ([docs/PARALLEL_WORK.md](docs/PARALLEL_WORK.md)).
+- Expo SDK 57, Expo Router, React Native 0.86 (new architecture), TypeScript strict,
+  TanStack Query, Jest, Maestro.
+
+## Lessons
+
+- The authentication scheme was the real unknown, not the UI. Writing spikes and
+  ADRs before code kept the guesswork out of the product code.
+- Mock-first development let every screen be finished, tested and demoed without
+  ever touching the real portal.
+- Building on a university's private systems is a moving target, and the university
+  eventually shipped its own app.
 
 ## Quickstart
 
@@ -114,7 +152,8 @@ pnpm sanitize-fixture <path-to-captured.html>
 
 - [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) — how the pieces fit together
 - [docs/CONTRIBUTING.md](docs/CONTRIBUTING.md) — track ownership, PR rules, definition of done
-- [docs/DISCOVERY.md](docs/DISCOVERY.md) — open questions about GUC's real portals
+- [docs/DISCOVERY.md](docs/DISCOVERY.md) — research spikes on GUC's real portals (archival)
+- [docs/DEVICE_CAPTURE.md](docs/DEVICE_CAPTURE.md) — emulator smoke-test and screenshot brief
 - [docs/ROADMAP.md](docs/ROADMAP.md) — feature phases and what's genuinely out of scope
 - [docs/adr/](docs/adr/) — why the stack, credential model, and feature conventions are what they are
 
