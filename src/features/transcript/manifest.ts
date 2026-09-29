@@ -7,6 +7,6 @@ export const manifest: FeatureManifest = {
   icon: "document-text-outline",
   order: 5,
   showInTabBar: false,
-  enabled: false,
+  enabled: true,
   route: "/(tabs)/transcript",
 };

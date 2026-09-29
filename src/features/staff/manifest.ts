@@ -7,6 +7,6 @@ export const manifest: FeatureManifest = {
   icon: "people-outline",
   order: 8,
   showInTabBar: false,
-  enabled: false,
+  enabled: true,
   route: "/(tabs)/staff",
 };

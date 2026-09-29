@@ -11,3 +11,5 @@ export { OfflineBanner } from "./OfflineBanner";
 export { FeatureErrorBoundary } from "./ErrorBoundary";
 export { useResponsiveLayout } from "./useResponsiveLayout";
 export { WebViewScreen } from "./WebViewScreen";
+export { QueryGate } from "./QueryGate";
+export type { QueryGateProps } from "./QueryGate";

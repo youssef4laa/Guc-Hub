@@ -7,6 +7,6 @@ export const manifest: FeatureManifest = {
   icon: "school-outline",
   order: 2,
   showInTabBar: true,
-  enabled: false,
+  enabled: true,
   route: "/(tabs)/grades",
 };

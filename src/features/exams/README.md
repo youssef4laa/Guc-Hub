@@ -1,22 +1,21 @@
 # `exams`
 
-Owner: Track A (portal). Source: GUCentral.
+Owner: Track A (portal). Status: **built on demo data, enabled.**
 
-Stub only — manifest.enabled is `false`. Live source throws `NOT_IMPLEMENTED`; mock
-source returns placeholder fake data so the app still boots in demo mode with this
-feature visible.
+Upcoming exams with countdowns, plus past exams dimmed. Dates are generated relative to today so the demo is never empty.
 
-## Blocked on
+## What is real and what is not
 
-Spike 1 and Spike 3.
+- The screen, store, schema (zod) and mock source are complete and unit-tested
+  (`__tests__/store.test.ts`).
+- There is **no live source**: `live.ts` throws `NOT_IMPLEMENTED`. No real GUC page
+  for this feature was ever captured, so there is no parser either. The old
+  placeholder parser and fixture were removed rather than kept as invented markup
+  (see `docs/CONTRIBUTING.md`: never invent GUC HTML).
+- All data comes from `mock.ts` and is fake.
 
-## Definition of done
+## If someone picks this up
 
-- [ ] Schema defined and exported
-- [ ] Mock source returns realistic fake data
-- [ ] Live source parses at least one real (sanitized) fixture, with a passing test
-- [ ] Loading / empty / error / `PARSE_FAILED` states all render
-- [ ] `PARSE_FAILED` offers "Open original page"
-- [ ] iOS + Android screenshots, light + dark
-- [ ] Screen-reader labels on interactive elements
-- [ ] `manifest.enabled` flipped to `true`
+Capture a real page with the in-app "Capture page" tool, sanitize it with
+`pnpm sanitize-fixture`, write `parser.ts` against it, and implement `live.ts`.
+That work is gated on the discovery spikes in `docs/DISCOVERY.md`.
