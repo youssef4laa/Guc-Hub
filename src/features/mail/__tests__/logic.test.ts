@@ -34,6 +34,12 @@ describe("bodyToPlainText", () => {
     expect(bodyToPlainText({ kind: "html", html: "<p>A&nbsp;&amp;&nbsp;B</p>" })).toBe("A & B");
   });
 
+  it("keeps words from adjacent block elements apart", () => {
+    expect(bodyToPlainText({ kind: "html", html: "<p>on campus</p><h2>Robotics</h2><div>club</div>" })).toBe(
+      "on campus Robotics club",
+    );
+  });
+
   it("passes plain text through, collapsing whitespace", () => {
     expect(bodyToPlainText({ kind: "text", text: "line one\n\n   line two" })).toBe("line one line two");
   });
