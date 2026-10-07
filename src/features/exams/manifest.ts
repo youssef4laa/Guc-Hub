@@ -7,6 +7,6 @@ export const manifest: FeatureManifest = {
   icon: "create-outline",
   order: 6,
   showInTabBar: false,
-  enabled: false,
+  enabled: true,
   route: "/(tabs)/exams",
 };

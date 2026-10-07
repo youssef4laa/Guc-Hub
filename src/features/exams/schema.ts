@@ -1,11 +1,15 @@
 import { z } from "zod";
 
-// Define this feature's data shape here, and nowhere else. Other features may not
-// import from here directly — only via a type re-exported through core/ if truly
-// shared (rare; prefer duplication over a cross-feature dependency).
 export const examsItemSchema = z.object({
   id: z.string(),
-  title: z.string(),
+  courseCode: z.string(),
+  courseName: z.string(),
+  kind: z.enum(["quiz", "midterm", "final"]),
+  /** ISO timestamp of the start. */
+  startsAt: z.string(),
+  durationMinutes: z.number().int().positive(),
+  room: z.string(),
+  seat: z.string().optional(),
 });
 
 export type ExamsItem = z.infer<typeof examsItemSchema>;

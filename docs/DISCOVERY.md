@@ -1,5 +1,13 @@
 # Discovery spikes
 
+> **Archival note.** Guc Hub is finished as a portfolio project (GUC released its
+> own app) and was never run against GUC's production systems with real
+> credentials. The findings in these spikes and the ADRs (`A-001`, `B-001`) are
+> observations from public, unauthenticated requests (HTTP challenges, DNS,
+> certificate chains) and a few of the authors' own sessions at the time. They
+> are recorded as research, are not guaranteed to still hold, and are not an
+> invitation to probe GUC systems.
+
 Everything here is a genuine unknown — nobody on this project has instrumented the
 real GUC portals yet. Each spike (its own file under `docs/discovery/`, owned by
 whichever track it blocks) names the question, why it matters, and a concrete way

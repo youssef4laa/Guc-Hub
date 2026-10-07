@@ -1,22 +1,14 @@
-# `flappy`
+# `flappy` ("Glide")
 
-Owner: Track B (mail & experience). Source: GUCentral (replaces the Dino game).
+Owner: Track B (mail & experience). Status: **built, enabled.**
 
-Stub only — manifest.enabled is `false`. Live source throws `NOT_IMPLEMENTED`; mock
-source returns placeholder fake data so the app still boots in demo mode with this
-feature visible.
+A small on-device tap-to-flap game with an original name and art (not Flappy
+Bird's). Nothing leaves the phone: the personal best is stored locally through
+`core/storage/kv`.
 
-## Blocked on
-
-None for the on-device game itself. The shared seasonal leaderboard needs a small opt-in backend — deliberately out of scope for this foundation (see docs/ROADMAP.md). Must use original name/art/sound, never Flappy Bird's.
-
-## Definition of done
-
-- [ ] Schema defined and exported
-- [ ] Mock source returns realistic fake data
-- [ ] Live source parses at least one real (sanitized) fixture, with a passing test
-- [ ] Loading / empty / error / `PARSE_FAILED` states all render
-- [ ] `PARSE_FAILED` offers "Open original page"
-- [ ] iOS + Android screenshots, light + dark
-- [ ] Screen-reader labels on interactive elements
-- [ ] `manifest.enabled` flipped to `true`
+- `game.ts` — pure, React-free game logic (physics, pipe spawning, collision,
+  scoring), unit-tested in `__tests__/game.test.ts`.
+- `screens/FlappyScreen.tsx` — a `requestAnimationFrame` loop rendering plain
+  `View`s.
+- The shared seasonal leaderboard was **not built**; it needs a backend, which is
+  out of scope (see `docs/ROADMAP.md`).

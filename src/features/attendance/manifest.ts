@@ -7,6 +7,6 @@ export const manifest: FeatureManifest = {
   icon: "checkmark-circle-outline",
   order: 7,
   showInTabBar: false,
-  enabled: false,
+  enabled: true,
   route: "/(tabs)/attendance",
 };

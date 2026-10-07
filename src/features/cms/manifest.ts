@@ -7,6 +7,6 @@ export const manifest: FeatureManifest = {
   icon: "folder-outline",
   order: 4,
   showInTabBar: true,
-  enabled: false,
+  enabled: true,
   route: "/(tabs)/cms",
 };

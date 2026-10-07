@@ -7,6 +7,6 @@ export const manifest: FeatureManifest = {
   icon: "star-outline",
   order: 9,
   showInTabBar: false,
-  enabled: false,
+  enabled: true,
   route: "/(tabs)/evaluations",
 };
