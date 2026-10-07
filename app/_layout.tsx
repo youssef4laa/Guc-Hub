@@ -39,7 +39,14 @@ function RootNavigator() {
       <StatusBar style={themeName === "dark" ? "light" : "dark"} />
       <OfflineBanner />
       <Stack
-        screenOptions={{ headerShown: false, contentStyle: { backgroundColor: theme.colors.background } }}
+        screenOptions={{
+          headerShown: false,
+          contentStyle: { backgroundColor: theme.colors.background },
+          // Screens that turn the header on (webview, dev/ui) would otherwise stay light in dark mode.
+          headerStyle: { backgroundColor: theme.colors.background },
+          headerTintColor: theme.colors.text,
+          headerTitleStyle: { color: theme.colors.text },
+        }}
       >
         <Stack.Screen name="login" />
         <Stack.Screen name="(tabs)" />
