@@ -16,18 +16,31 @@ device except to GUC's own hosts. See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.m
 
 ## What is real and what is mocked
 
-| Area                                                                                                  | State                                                                                                          |
-| ----------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
-| Auth: login, secure credential storage, silent re-login, biometric unlock, demo mode                  | Built. Only the mock strategy has been exercised end to end                                                    |
-| Schedule, Grades, CMS, Exams, Attendance, Staff, Transcript, Evaluations                              | Built on demo data, with unit tests. No live source or parser (nothing was ever captured from the real portal) |
-| Settings (theme, sign out, unofficial notice)                                                         | Built                                                                                                          |
-| Glide (on-device tap-to-flap game, local best score)                                                  | Built                                                                                                          |
-| Mail (list, read, search, compose, attachments, swipe-delete, safe HTML)                              | Code-complete on demo data with ~170 logic tests, but **disabled**: it has never been driven on a device       |
-| Real NTLM login (`modules/guc-ntlm`, iOS `URLSession` and Android OkHttp) and an Android trust anchor | Written and unit-tested. Never verified against GUC's real servers                                             |
-| Push notifications, leaderboard backend, home-screen widgets                                          | Not built. See [docs/ROADMAP.md](docs/ROADMAP.md)                                                              |
+| Area                                                                                                  | State                                                                                                                                                      |
+| ----------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Auth: login, secure credential storage, silent re-login, biometric unlock, demo mode                  | Built. Only the mock strategy has been exercised end to end                                                                                                |
+| Schedule, Grades, CMS, Exams, Attendance, Staff, Transcript, Evaluations                              | Built on demo data, with unit tests. No live source or parser (nothing was ever captured from the real portal)                                             |
+| Settings (theme, sign out, unofficial notice)                                                         | Built                                                                                                                                                      |
+| Glide (on-device tap-to-flap game, local best score)                                                  | Built                                                                                                                                                      |
+| Mail (list, read, search, compose, attachments, swipe-delete, safe HTML)                              | Built on demo data with ~170 logic tests and driven on an Android emulator (see [the device test report](docs/DEVICE_TEST_REPORT.md)). No live mail server |
+| Real NTLM login (`modules/guc-ntlm`, iOS `URLSession` and Android OkHttp) and an Android trust anchor | Written and unit-tested. Never verified against GUC's real servers                                                                                         |
+| Push notifications, leaderboard backend, home-screen widgets                                          | Not built. See [docs/ROADMAP.md](docs/ROADMAP.md)                                                                                                          |
 
-<!-- SCREENSHOTS: add a light/dark gallery here once docs/screenshots/ exists
-     (capture brief: docs/DEVICE_CAPTURE.md). -->
+## Screenshots
+
+Android emulator, demo mode. Everything shown is built-in fake data, not a real
+student's. Light on the first row of each pair, dark on the second. More, including
+the demo GIF, in [docs/screenshots](docs/screenshots/README.md); what was tested
+is in [docs/DEVICE_TEST_REPORT.md](docs/DEVICE_TEST_REPORT.md).
+
+<table>
+  <tr><td align="center"><img src="docs/screenshots/android/light/02-schedule.png" width="190" alt="Schedule (light)"><br><sub>Schedule</sub></td><td align="center"><img src="docs/screenshots/android/light/03-grades.png" width="190" alt="Grades (light)"><br><sub>Grades</sub></td><td align="center"><img src="docs/screenshots/android/light/04-cms.png" width="190" alt="CMS (light)"><br><sub>CMS</sub></td><td align="center"><img src="docs/screenshots/android/light/05-exams.png" width="190" alt="Exams (light)"><br><sub>Exams</sub></td></tr>
+  <tr><td align="center"><img src="docs/screenshots/android/dark/02-schedule.png" width="190" alt="Schedule (dark)"><br><sub>Schedule</sub></td><td align="center"><img src="docs/screenshots/android/dark/03-grades.png" width="190" alt="Grades (dark)"><br><sub>Grades</sub></td><td align="center"><img src="docs/screenshots/android/dark/04-cms.png" width="190" alt="CMS (dark)"><br><sub>CMS</sub></td><td align="center"><img src="docs/screenshots/android/dark/05-exams.png" width="190" alt="Exams (dark)"><br><sub>Exams</sub></td></tr>
+  <tr><td align="center"><img src="docs/screenshots/android/light/06-attendance.png" width="190" alt="Attendance (light)"><br><sub>Attendance</sub></td><td align="center"><img src="docs/screenshots/android/light/13a-mail-inbox.png" width="190" alt="Mail (light)"><br><sub>Mail</sub></td><td align="center"><img src="docs/screenshots/android/light/08-staff.png" width="190" alt="Staff (light)"><br><sub>Staff</sub></td><td align="center"><img src="docs/screenshots/android/light/10b-glide-run.png" width="190" alt="Glide (light)"><br><sub>Glide</sub></td></tr>
+  <tr><td align="center"><img src="docs/screenshots/android/dark/06-attendance.png" width="190" alt="Attendance (dark)"><br><sub>Attendance</sub></td><td align="center"><img src="docs/screenshots/android/dark/13a-mail-inbox.png" width="190" alt="Mail (dark)"><br><sub>Mail</sub></td><td align="center"><img src="docs/screenshots/android/dark/08-staff.png" width="190" alt="Staff (dark)"><br><sub>Staff</sub></td><td align="center"><img src="docs/screenshots/android/dark/10b-glide-run.png" width="190" alt="Glide (dark)"><br><sub>Glide</sub></td></tr>
+</table>
+
+![Demo tour](docs/screenshots/demo.gif)
 
 ## Engineering highlights
 
