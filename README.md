@@ -153,6 +153,7 @@ pnpm sanitize-fixture <path-to-captured.html>
 - [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) — how the pieces fit together
 - [docs/CONTRIBUTING.md](docs/CONTRIBUTING.md) — track ownership, PR rules, definition of done
 - [docs/DISCOVERY.md](docs/DISCOVERY.md) — research spikes on GUC's real portals (archival)
+- [docs/LOCAL_HANDOFF.md](docs/LOCAL_HANDOFF.md) — the plan for finishing on a machine with an emulator
 - [docs/DEVICE_CAPTURE.md](docs/DEVICE_CAPTURE.md) — emulator smoke-test and screenshot brief
 - [docs/ROADMAP.md](docs/ROADMAP.md) — feature phases and what's genuinely out of scope
 - [docs/adr/](docs/adr/) — why the stack, credential model, and feature conventions are what they are
