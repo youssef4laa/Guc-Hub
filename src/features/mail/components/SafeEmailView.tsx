@@ -1,6 +1,6 @@
 import { useRef } from "react";
 import { useTranslation } from "react-i18next";
-import { Alert, Linking } from "react-native";
+import { Alert, Linking, Platform } from "react-native";
 import { WebView } from "react-native-webview";
 
 import { createLogger } from "../../../core/logging";
@@ -63,7 +63,8 @@ export function SafeEmailView({ html }: { html: string }) {
       allowFileAccessFromFileURLs={false}
       allowUniversalAccessFromFileURLs={false}
       allowsLinkPreview={false}
-      dataDetectorTypes="none"
+      // iOS-only prop: on Android the Fabric view aborts the whole app (RawValue castValue).
+      dataDetectorTypes={Platform.OS === "ios" ? "none" : undefined}
       mixedContentMode="never"
       mediaPlaybackRequiresUserAction
       allowsInlineMediaPlayback={false}
