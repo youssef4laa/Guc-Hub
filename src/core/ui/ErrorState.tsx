@@ -15,8 +15,8 @@ export interface ErrorStateProps {
 
 const MESSAGES: Record<PortalErrorCode, string> = {
   AUTH_INVALID: "auth.invalidCredentials",
-  SESSION_EXPIRED: "common.retry",
-  PORTAL_UNAVAILABLE: "common.retry",
+  SESSION_EXPIRED: "common.sessionExpired",
+  PORTAL_UNAVAILABLE: "common.portalUnavailable",
   PARSE_FAILED: "common.parseFailed",
   TRANSCRIPT_LOCKED: "common.parseFailed",
   NOT_IMPLEMENTED: "common.notImplemented",

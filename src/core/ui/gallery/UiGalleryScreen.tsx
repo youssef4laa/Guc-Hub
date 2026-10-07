@@ -1,5 +1,6 @@
 import { ScrollView, View } from "react-native";
 
+import { PortalError } from "../../portal/PortalError";
 import { useTheme } from "../../theme";
 import { Button } from "../Button";
 import { Card } from "../Card";
@@ -62,6 +63,19 @@ export function UiGalleryScreen() {
         <View style={{ gap: theme.spacing.sm }}>
           <Text variant="heading">Error state</Text>
           <ErrorState error={new Error("Example error message")} onRetry={() => {}} />
+        </View>
+
+        <View style={{ gap: theme.spacing.sm }}>
+          <Text variant="heading">Error state (PARSE_FAILED)</Text>
+          <ErrorState
+            error={
+              new PortalError("PARSE_FAILED", "Example parse failure", {
+                sourceUrl: "https://example.invalid/original-page",
+              })
+            }
+            onRetry={() => {}}
+            onOpenOriginal={() => {}}
+          />
         </View>
       </ScrollView>
     </Screen>

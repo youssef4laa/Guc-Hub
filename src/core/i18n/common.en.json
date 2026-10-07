@@ -1,6 +1,8 @@
 {
   "common": {
     "retry": "Retry",
+    "sessionExpired": "Your session expired. Sign in again.",
+    "portalUnavailable": "Something went wrong. Try again.",
     "loading": "Loading…",
     "offline": "You're offline. Showing cached data.",
     "openOriginal": "Open original page",
