@@ -2,6 +2,7 @@ import "react-native-reanimated";
 import "../src/core/i18n";
 
 import { Stack, useRouter, useSegments } from "expo-router";
+import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
@@ -28,13 +29,14 @@ function useProtectedRoute(isAuthenticated: boolean, isBootstrapping: boolean) {
 
 function RootNavigator() {
   const { isAuthenticated, isBootstrapping } = useAuth();
-  const { theme } = useTheme();
+  const { theme, themeName } = useTheme();
   useProtectedRoute(isAuthenticated, isBootstrapping);
 
   if (isBootstrapping) return null;
 
   return (
     <>
+      <StatusBar style={themeName === "dark" ? "light" : "dark"} />
       <OfflineBanner />
       <Stack
         screenOptions={{ headerShown: false, contentStyle: { backgroundColor: theme.colors.background } }}
