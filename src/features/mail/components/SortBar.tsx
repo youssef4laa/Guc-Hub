@@ -14,6 +14,7 @@ export function SortBar({ sort, onChange }: { sort: MailSort; onChange: (sort: M
   return (
     <ScrollView
       horizontal
+      style={{ flexGrow: 0, minHeight: 44 }}
       showsHorizontalScrollIndicator={false}
       accessibilityLabel={t("mail.sortBy")}
       contentContainerStyle={{ gap: theme.spacing.sm, paddingVertical: theme.spacing.xs }}
